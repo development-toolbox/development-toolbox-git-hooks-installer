@@ -1,15 +1,15 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-04-03 13:27:53
+> **Generated on:** 2025-04-03 13:52:11
 
 > **Branch:** `main`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| main | 4344719 | Johan Sörell |
-| origin | 1f34ec5 | Johan Sörell |
-| origin/main | 1f34ec5 | Johan Sörell |
+| main | b922ad3 | Johan Sörell |
+| origin | c6c5ba4 | Johan Sörell |
+| origin/main | c6c5ba4 | Johan Sörell |
 
 ## 🏷️ Tags
 | **Tag** | **Commit Hash** | **Tagged On** |
@@ -20,6 +20,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [b922ad3](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/b922ad3)
+- **Date:** 2025-04-03 13:52:11 +0200
+- **Author:** Johan Sörell
+- **Message:** doc(readme): Updated the readme
+
+### ✅ Commit: [c6c5ba4](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/c6c5ba4)
+- **Date:** 2025-04-03 13:27:52 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: 43447195e71ecccba6bc4142ccd747c0af3eb554
+
 ### ✅ Commit: [4344719](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/4344719)
 - **Date:** 2025-04-03 13:27:52 +0200
 - **Author:** Johan Sörell
