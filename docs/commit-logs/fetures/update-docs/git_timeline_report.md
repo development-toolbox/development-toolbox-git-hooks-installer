@@ -1,15 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-05-30 21:16:01
+> **Generated on:** 2025-05-30 21:23:02
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | e050ff9 | Johan Sörell |
+| fetures/update-docs | ce1962c | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
+| origin/fetures/update-docs | a0601e9 | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -21,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [ce1962c](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ce1962c)
+- **Date:** 2025-05-30 21:23:02 +0200
+- **Author:** Johan Sörell
+- **Message:** refactor(utils): extract reusable git helper functions to githooks_utils.py
+
+### ✅ Commit: [a0601e9](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/a0601e9)
+- **Date:** 2025-05-30 21:16:01 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: e050ff91f885ddfadd307dc55aef5e300c9fad3f
+
 ### ✅ Commit: [e050ff9](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/e050ff9)
 - **Date:** 2025-05-30 21:16:01 +0200
 - **Author:** Johan Sörell
