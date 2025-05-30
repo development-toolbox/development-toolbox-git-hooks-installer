@@ -7,7 +7,7 @@
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | 5b5b53f | Johan Sörell |
+| fetures/update-docs | e050ff9 | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
@@ -20,7 +20,12 @@
 | **Commit** | **Message** | **Date** |
 |------------|-------------|---------|
 
-## 📁 Commit Log
+## 📑 Commit Log
+### ✅ Commit: [e050ff9](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/e050ff9)
+- **Date:** 2025-05-30 21:16:01 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: 5b5b53f1cca9661dd86141ef80d225203e0da525
+
 ### ✅ Commit: [5b5b53f](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/5b5b53f)
 - **Date:** 2025-05-30 18:42:51 +0200
 - **Author:** Johan Sörell
