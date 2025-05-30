@@ -1,15 +1,15 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-04-03 13:52:11
+> **Generated on:** 2025-05-30 18:42:51
 
 > **Branch:** `main`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| main | b922ad3 | Johan Sörell |
-| origin | c6c5ba4 | Johan Sörell |
-| origin/main | c6c5ba4 | Johan Sörell |
+| main | bb61e0a | Johan Sörell |
+| origin | 39dc3fb | Johan Sörell |
+| origin/main | 39dc3fb | Johan Sörell |
 
 ## 🏷️ Tags
 | **Tag** | **Commit Hash** | **Tagged On** |
@@ -20,6 +20,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [bb61e0a](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/bb61e0a)
+- **Date:** 2025-05-30 18:42:51 +0200
+- **Author:** Johan Sörell
+- **Message:** core(script): renamed and Fixed core installation script
+
+### ✅ Commit: [39dc3fb](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/39dc3fb)
+- **Date:** 2025-04-03 13:52:11 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: b922ad31b15bfc9ffddba71297a90f8ce4d621ee
+
 ### ✅ Commit: [b922ad3](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/b922ad3)
 - **Date:** 2025-04-03 13:52:11 +0200
 - **Author:** Johan Sörell
