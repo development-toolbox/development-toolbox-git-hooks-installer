@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-23 21:04:56
+> **Generated on:** 2025-06-23 21:51:13
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | 4a6d86a | Johan Sörell |
+| fetures/update-docs | 484734f | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | 4a13921 | Johan Sörell |
+| origin/fetures/update-docs | 6cd9bce | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [484734f](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/484734f)
+- **Date:** 2025-06-23 21:51:12 +0200
+- **Author:** Johan Sörell
+- **Message:** feat(installer): change branch naming from chore to feat
+
+### ✅ Commit: [6cd9bce](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/6cd9bce)
+- **Date:** 2025-06-23 21:04:56 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: 4a6d86ac61cc7a7ad085972ca05d9a8a63a04252
+
 ### ✅ Commit: [4a6d86a](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/4a6d86a)
 - **Date:** 2025-06-23 21:04:56 +0200
 - **Author:** Johan Sörell
