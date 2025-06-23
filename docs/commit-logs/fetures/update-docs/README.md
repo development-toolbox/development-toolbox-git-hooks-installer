@@ -7,6 +7,7 @@ Each commit links to its detailed log.
 
 | Commit Hash | Date & Time       | Author       | Message           |
 |-------------|------------------|--------------|-------------------|
+| [42bda362](./42bda362.md) | 2025-06-23 22:38 | Johan Sörell | feat(installer): add smart .gitignore management |
 | [2ee8dd46](./2ee8dd46.md) | 2025-06-23 21:54 | Johan Sörell | fix(gitignore): added my special git ignore content |
 | [484734f8](./484734f8.md) | 2025-06-23 21:51 | Johan Sörell | feat(installer): change branch naming from chore to feat |
 | [4a6d86ac](./4a6d86ac.md) | 2025-06-23 21:04 | Johan Sörell | feat(githooks): Add conventional branch naming for updates |
