@@ -382,8 +382,7 @@ def merge_branch(repo_path: Path, branch_name: str, target_branch: str) -> bool:
         return False
     
     # Merge the feature branch
-    merge_result = run_git_command(repo_path, ["merge", branch_name, "--no-ff", "-m", 
-                                               f"Merge branch '{branch_name}' - Update git hooks and scripts"])
+    merge_result = run_git_command(repo_path, ["merge", branch_name, "--no-ff", "-m", f"Merge branch '{branch_name}' - Update git hooks and scripts"])
     if merge_result.returncode != 0:
         logger.error(f"Failed to merge: {merge_result.stderr}")
         return False
@@ -397,8 +396,42 @@ def merge_branch(repo_path: Path, branch_name: str, target_branch: str) -> bool:
     
     return True
 
-def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = False, 
-                   push: bool = True, force: bool = False):
+def get_conventional_branch_name(hooks_need_update: bool, 
+                               scripts_need_update: bool, 
+                               docs_need_update: bool,
+                               force: bool = False) -> str:
+    """
+    Generate a branch name following conventional commits pattern.
+    
+    Format: <type>/<description>-<timestamp>
+    Where type follows conventional commits: feat, fix, docs, chore, etc.
+    """
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    
+    # Determine the primary type of change
+    if force:
+        return f"chore/force-update-githooks-{timestamp}"
+    
+    # Count what needs updating
+    updates = sum([hooks_need_update, scripts_need_update, docs_need_update])
+    
+    if updates == 0:
+        return f"chore/install-githooks-{timestamp}"
+    elif updates == 1:
+        if hooks_need_update:
+            return f"feat/update-git-hooks-{timestamp}"
+        elif scripts_need_update:
+            return f"fix/update-hook-scripts-{timestamp}"
+        elif docs_need_update:
+            return f"docs/update-githooks-docs-{timestamp}"
+        else:
+            # This shouldn't happen, but satisfies the type checker
+            return f"chore/update-githooks-{timestamp}"
+    else:
+        # Multiple updates
+        return f"chore/update-githooks-installation-{timestamp}"
+
+def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = False, push: bool = True, force: bool = False):
     """
     Main function to set up git hooks in a target repository.
 
@@ -495,9 +528,14 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
             if pull_result.returncode != 0:
                 logger.warning(f"Pull failed (might be okay if no upstream): {pull_result.stderr}")
         
-        # Create a unique branch name
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        branch_name = f"update-githooks-{timestamp}"
+
+        # Create a branch name following conventional commits pattern
+        branch_name = get_conventional_branch_name(
+            hooks_need_update,
+            scripts_need_update, 
+            docs_need_update,
+            force
+        )
         
         # Create and checkout new branch
         create_result = run_git_command(target_repo, ["checkout", "-b", branch_name])
