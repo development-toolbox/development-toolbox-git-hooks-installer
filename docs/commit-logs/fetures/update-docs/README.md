@@ -7,6 +7,7 @@ Each commit links to its detailed log.
 
 | Commit Hash | Date & Time       | Author       | Message           |
 |-------------|------------------|--------------|-------------------|
+| [4a6d86ac](./4a6d86ac.md) | 2025-06-23 21:04 | Johan Sörell | feat(githooks): Add conventional branch naming for updates |
 | [ec218c65](./ec218c65.md) | 2025-06-23 18:03 | Johan Sörell | chore(script, install) Install git-hooks files |
 | [f735a993](./f735a993.md) | 2025-06-23 17:55 | Johan Sörell | fix(update-readme.sh): strengthen directory safety check for README_FILE path |
 | [bc9ca7ee](./bc9ca7ee.md) | 2025-06-23 17:50 | Johan Sörell | chore(git-hooks-installer-v7.5.py): update and improve git hooks installer logic |

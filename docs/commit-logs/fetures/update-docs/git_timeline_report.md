@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-23 18:03:44
+> **Generated on:** 2025-06-23 21:04:56
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | ec218c6 | Johan Sörell |
+| fetures/update-docs | 4a6d86a | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | a48302b | Johan Sörell |
+| origin/fetures/update-docs | 4a13921 | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [4a6d86a](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/4a6d86a)
+- **Date:** 2025-06-23 21:04:56 +0200
+- **Author:** Johan Sörell
+- **Message:** feat(githooks): Add conventional branch naming for updates
+
+### ✅ Commit: [4a13921](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/4a13921)
+- **Date:** 2025-06-23 18:03:44 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: ec218c656a0862b03fcfecc3583d36a1a5b447ff
+
 ### ✅ Commit: [ec218c6](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ec218c6)
 - **Date:** 2025-06-23 18:03:44 +0200
 - **Author:** Johan Sörell
