@@ -403,33 +403,48 @@ def get_conventional_branch_name(hooks_need_update: bool,
     """
     Generate a branch name following conventional commits pattern.
     
-    Format: <type>/<description>-<timestamp>
-    Where type follows conventional commits: feat, fix, docs, chore, etc.
+    Args:
+        hooks_need_update: Whether git hooks need to be updated
+        scripts_need_update: Whether scripts need to be updated
+        docs_need_update: Whether documentation needs to be updated
+        force: Whether this is a forced reinstall
+        
+    Returns:
+        Branch name in format: <type>/<description>-<timestamp>
+        
+    Examples:
+        feat/install-githooks-20250623-210623
+        feat/update-git-hooks-20250623-210623
+        feat/update-hook-scripts-20250623-210623
+        docs/update-githooks-docs-20250623-210623
+        feat/update-githooks-installation-20250623-210623
+        feat/force-update-githooks-20250623-210623
     """
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     
-    # Determine the primary type of change
     if force:
-        return f"chore/force-update-githooks-{timestamp}"
+        return f"feat/force-update-githooks-{timestamp}"
     
-    # Count what needs updating
+    # Count how many components need updating
     updates = sum([hooks_need_update, scripts_need_update, docs_need_update])
     
     if updates == 0:
-        return f"chore/install-githooks-{timestamp}"
+        # Nothing needs updating - this is a fresh install
+        return f"feat/install-githooks-{timestamp}"
     elif updates == 1:
+        # Only one component needs updating - use specific name
         if hooks_need_update:
             return f"feat/update-git-hooks-{timestamp}"
         elif scripts_need_update:
-            return f"fix/update-hook-scripts-{timestamp}"
+            return f"feat/update-hook-scripts-{timestamp}"
         elif docs_need_update:
             return f"docs/update-githooks-docs-{timestamp}"
         else:
-            # This shouldn't happen, but satisfies the type checker
-            return f"chore/update-githooks-{timestamp}"
+            return f"feat/update-githooks-{timestamp}"
     else:
-        # Multiple updates
-        return f"chore/update-githooks-installation-{timestamp}"
+        # Multiple components need updating (updates > 1)
+        # Use general name since we're updating the entire installation
+        return f"feat/update-githooks-installation-{timestamp}"
 
 def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = False, push: bool = True, force: bool = False):
     """
