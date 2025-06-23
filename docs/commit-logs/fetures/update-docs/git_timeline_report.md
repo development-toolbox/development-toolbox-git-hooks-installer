@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-23 17:50:22
+> **Generated on:** 2025-06-23 17:55:37
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | bc9ca7e | Johan Sörell |
+| fetures/update-docs | f735a99 | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | c6dac00 | Johan Sörell |
+| origin/fetures/update-docs | 218a014 | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [f735a99](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/f735a99)
+- **Date:** 2025-06-23 17:55:37 +0200
+- **Author:** Johan Sörell
+- **Message:** fix(update-readme.sh): strengthen directory safety check for README_FILE path
+
+### ✅ Commit: [218a014](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/218a014)
+- **Date:** 2025-06-23 17:50:22 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: bc9ca7ee9c5752cc28440808f0400498d142e88f
+
 ### ✅ Commit: [bc9ca7e](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/bc9ca7e)
 - **Date:** 2025-06-23 17:50:22 +0200
 - **Author:** Johan Sörell
