@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-05-30 21:23:02
+> **Generated on:** 2025-06-23 17:50:22
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | ce1962c | Johan Sörell |
+| fetures/update-docs | bc9ca7e | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | a0601e9 | Johan Sörell |
+| origin/fetures/update-docs | c6dac00 | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [bc9ca7e](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/bc9ca7e)
+- **Date:** 2025-06-23 17:50:22 +0200
+- **Author:** Johan Sörell
+- **Message:** chore(git-hooks-installer-v7.5.py): update and improve git hooks installer logic
+
+### ✅ Commit: [c6dac00](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/c6dac00)
+- **Date:** 2025-05-30 21:23:02 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: ce1962c16201a4ae74407631b101a73b786557b5
+
 ### ✅ Commit: [ce1962c](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ce1962c)
 - **Date:** 2025-05-30 21:23:02 +0200
 - **Author:** Johan Sörell
