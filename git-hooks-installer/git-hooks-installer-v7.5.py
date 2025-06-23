@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # githooks-install.py
-# version 7.0
+# version 7.5
 # Author: Johan Sörell
 # Date: 2025-05-30
 """
@@ -186,7 +186,7 @@ class GitHooksInstaller:
                 logger.warning(f"   - {file}")
             logger.warning("   These files were NOT deleted. Remove manually if needed.")
         
-        self.managed_files[category] = new_managed_files
+        self.managed_files[category] = set(new_managed_files)
         return copied_files
     
     def check_if_update_needed(self, hooks_dst: Path) -> tuple[bool, bool, bool]:
@@ -450,6 +450,13 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
     scripts_dst = target_repo / "scripts"
     docs_dst = target_repo / "docs" / "githooks"
     
+    # 🔐 Security check: Prevent writing outside target repo structure
+    if not scripts_dst.resolve().is_relative_to(target_repo.resolve()):
+        raise ValueError(f"🚫 Unsafe target scripts directory: {scripts_dst}")
+    if not hooks_dst.resolve().is_relative_to((target_repo / ".git" / "hooks").parent.resolve()):
+        raise ValueError(f"🚫 Unsafe target hooks directory: {hooks_dst}")
+
+    
     # Check if update is needed - BEFORE doing anything!
     hooks_need_update, scripts_need_update, docs_need_update = installer.check_if_update_needed(hooks_dst)
     
@@ -532,8 +539,8 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
         
         version_file = installer.save_version_info(
             scripts_hash, docs_hash,
-            installer.managed_files.get("scripts", []),
-            installer.managed_files.get("docs", [])
+            list(installer.managed_files.get("scripts", [])),
+            list(installer.managed_files.get("docs", []))
         )
         files_to_commit.append("docs/githooks/.githooks-version.json")
         
