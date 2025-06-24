@@ -53,6 +53,12 @@ jobs:
       run: |
         if [ -f scripts/post-commit/generate_git_timeline.py ]; then
           echo "Generating git timeline..."
+          # Set branch name for the script
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            export BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          else
+            export BRANCH_NAME="${{ github.ref_name }}"
+          fi
           python scripts/post-commit/generate_git_timeline.py
         else
           echo "Git timeline generator not found, skipping..."
