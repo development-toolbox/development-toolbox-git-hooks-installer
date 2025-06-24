@@ -1,0 +1,71 @@
+# GitLab CI job for updating git timeline
+# This will be appended to existing .gitlab-ci.yml or create a new one
+
+update-git-timeline:
+  stage: .post
+
+  rules:
+  # Run on merge requests
+  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  # Run on pushes to main branches
+  - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"'
+  # Allow manual trigger
+  - when: manual
+    allow_failure: true
+
+  image: python:3-slim
+
+  before_script:
+  - apt-get update && apt-get install -y git
+  - git config --global user.email "gitlab-ci@${CI_SERVER_HOST}"
+  - git config --global user.name "GitLab CI"
+  # Set up git credentials
+  - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+
+  script:
+  # Checkout the right branch
+  - |
+    if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+      git fetch origin merge-requests/${CI_MERGE_REQUEST_IID}/head:mr-${CI_MERGE_REQUEST_IID}
+      git checkout mr-${CI_MERGE_REQUEST_IID}
+    else
+      git checkout ${CI_COMMIT_REF_NAME}
+    fi
+
+  # Install dependencies if needed
+  - |
+    if [ -f requirements.txt ]; then
+      pip install -r requirements.txt
+    fi
+
+  # Run git timeline generator
+  - |
+    if [ -f scripts/post-commit/generate_git_timeline.py ]; then
+      echo "Generating git timeline..."
+      python scripts/post-commit/generate_git_timeline.py
+    fi
+
+  # Run readme updater
+  - |
+    if [ -f scripts/post-commit/update-readme.sh ]; then
+      echo "Updating README..."
+      bash scripts/post-commit/update-readme.sh
+    fi
+
+  # Commit and push if there are changes
+  - |
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A
+      if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        git commit -m "chore: Update git timeline for MR !${CI_MERGE_REQUEST_IID} [skip ci]"
+        git push origin HEAD:${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+      else
+        git commit -m "chore: Update git timeline and documentation [skip ci]"
+        git push origin HEAD:${CI_COMMIT_REF_NAME}
+      fi
+      echo "✅ Changes committed and pushed"
+    else
+      echo "ℹ️ No changes to commit"
+    fi
+  # Optionally, you can add a job to notify about the changes
+  # - echo "Git timeline and README updated successfully"
