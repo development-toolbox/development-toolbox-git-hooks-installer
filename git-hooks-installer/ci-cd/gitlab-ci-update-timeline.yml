@@ -42,6 +42,12 @@ update-git-timeline:
   - |
     if [ -f scripts/post-commit/generate_git_timeline.py ]; then
       echo "Generating git timeline..."
+      # Set branch name for the script
+      if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        export BRANCH_NAME="$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+      else
+        export BRANCH_NAME="$CI_COMMIT_REF_NAME"
+      fi
       python scripts/post-commit/generate_git_timeline.py
     fi
 
@@ -49,6 +55,12 @@ update-git-timeline:
   - |
     if [ -f scripts/post-commit/update-readme.sh ]; then
       echo "Updating README..."
+      # Set branch name for the script
+      if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        export BRANCH_NAME="$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+      else
+        export BRANCH_NAME="$CI_COMMIT_REF_NAME"
+      fi
       bash scripts/post-commit/update-readme.sh
     fi
 
