@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-25 15:47:33
+> **Generated on:** 2025-06-25 16:06:46
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | 28a8394 | Johan Sörell |
+| fetures/update-docs | c5f6cde | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | 930136f | Johan Sörell |
+| origin/fetures/update-docs | adcadb4 | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [c5f6cde](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/c5f6cde)
+- **Date:** 2025-06-25 16:06:46 +0200
+- **Author:** Johan Sörell
+- **Message:** fix(ci-cd): add debugging for git state and script execution
+
+### ✅ Commit: [adcadb4](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/adcadb4)
+- **Date:** 2025-06-25 15:47:33 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: 28a83941b31fb5db00e0290e513ce7fb60b99090
+
 ### ✅ Commit: [28a8394](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/28a8394)
 - **Date:** 2025-06-25 15:47:33 +0200
 - **Author:** Johan Sörell
