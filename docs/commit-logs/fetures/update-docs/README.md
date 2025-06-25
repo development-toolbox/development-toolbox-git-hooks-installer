@@ -7,6 +7,7 @@ Each commit links to its detailed log.
 
 | Commit Hash | Date & Time       | Author       | Message           |
 |-------------|------------------|--------------|-------------------|
+| [28a83941](./28a83941.md) | 2025-06-25 15:47 | Johan Sörell | fix(ci-cd): add git config for author identity |
 | [ca18d686](./ca18d686.md) | 2025-06-25 15:32 | Johan Sörell | fix(ci-cd): correct GitHub Actions branch name variables |
 | [73980a8c](./73980a8c.md) | 2025-06-25 15:09 | Johan Sörell | fix(ci-cd): set BRANCH_NAME environment variable for all scripts |
 | [db03bf27](./db03bf27.md) | 2025-06-24 22:33 | Johan Sörell | fix(ci-cd): add requirements.txt and fix branch name issue |
