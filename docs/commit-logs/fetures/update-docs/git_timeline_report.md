@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-25 15:09:00
+> **Generated on:** 2025-06-25 15:32:50
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | 73980a8 | Johan Sörell |
+| fetures/update-docs | ca18d68 | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | 8b17b21 | Johan Sörell |
+| origin/fetures/update-docs | 9e0f1ee | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [ca18d68](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ca18d68)
+- **Date:** 2025-06-25 15:32:50 +0200
+- **Author:** Johan Sörell
+- **Message:** fix(ci-cd): correct GitHub Actions branch name variables
+
+### ✅ Commit: [9e0f1ee](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/9e0f1ee)
+- **Date:** 2025-06-25 15:09:00 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: 73980a8c1b04f5cd3c004f4ee50a028286e978c3
+
 ### ✅ Commit: [73980a8](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/73980a8)
 - **Date:** 2025-06-25 15:09:00 +0200
 - **Author:** Johan Sörell
