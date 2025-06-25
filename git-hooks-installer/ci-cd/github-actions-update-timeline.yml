@@ -96,9 +96,16 @@ jobs:
           fi
           echo "BRANCH_NAME set to: $BRANCH_NAME"
           
-          # Debug: Show what the script is trying to do
-          echo "=== Debug: update-readme.sh first 20 lines ==="
-          head -20 scripts/post-commit/update-readme.sh
+          # Set REPO_ROOT to help the script
+          export REPO_ROOT="${{ github.workspace }}"
+          echo "REPO_ROOT set to: $REPO_ROOT"
+          
+          # Debug: Show more of the script
+          echo "=== Debug: Looking for commit reference ==="
+          grep -n "27f36953" scripts/post-commit/update-readme.sh || echo "Commit ref not hardcoded"
+          
+          echo "=== Debug: Show lines 50-70 of script ==="
+          sed -n '50,70p' scripts/post-commit/update-readme.sh
           
           bash scripts/post-commit/update-readme.sh
         else
