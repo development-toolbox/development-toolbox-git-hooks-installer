@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-25 16:06:46
+> **Generated on:** 2025-06-25 16:15:40
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | c5f6cde | Johan Sörell |
+| fetures/update-docs | b7c1f2b | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | adcadb4 | Johan Sörell |
+| origin/fetures/update-docs | 878aaef | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [b7c1f2b](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/b7c1f2b)
+- **Date:** 2025-06-25 16:15:40 +0200
+- **Author:** Johan Sörell
+- **Message:** fix(ci-cd): add REPO_ROOT env var and extended debugging
+
+### ✅ Commit: [878aaef](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/878aaef)
+- **Date:** 2025-06-25 16:06:46 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: c5f6cde671123fd5d6cb747f533ef7289da95fd7
+
 ### ✅ Commit: [c5f6cde](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/c5f6cde)
 - **Date:** 2025-06-25 16:06:46 +0200
 - **Author:** Johan Sörell
