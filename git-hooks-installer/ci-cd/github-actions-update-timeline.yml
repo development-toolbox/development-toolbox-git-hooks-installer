@@ -49,6 +49,11 @@ jobs:
           pip install -r requirements.txt
         fi
 
+    - name: Configure Git
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+
     - name: Generate git timeline
       run: |
         if [ -f scripts/post-commit/generate_git_timeline.py ]; then
