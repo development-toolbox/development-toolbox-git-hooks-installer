@@ -1,16 +1,16 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-06-24 22:33:15
+> **Generated on:** 2025-06-25 15:09:00
 
 > **Branch:** `fetures/update-docs`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| fetures/update-docs | db03bf2 | Johan Sörell |
+| fetures/update-docs | 73980a8 | Johan Sörell |
 | main | 5b5b53f | Johan Sörell |
 | origin | 5b5b53f | Johan Sörell |
-| origin/fetures/update-docs | a770037 | Johan Sörell |
+| origin/fetures/update-docs | 8b17b21 | Johan Sörell |
 | origin/main | 5b5b53f | Johan Sörell |
 
 ## 🏷️ Tags
@@ -22,6 +22,16 @@
 |------------|-------------|---------|
 
 ## 📑 Commit Log
+### ✅ Commit: [73980a8](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/73980a8)
+- **Date:** 2025-06-25 15:09:00 +0200
+- **Author:** Johan Sörell
+- **Message:** fix(ci-cd): set BRANCH_NAME environment variable for all scripts
+
+### ✅ Commit: [8b17b21](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/8b17b21)
+- **Date:** 2025-06-24 22:33:14 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: db03bf274cc75fe138669a2ddf6455d1c83b1a5a
+
 ### ✅ Commit: [db03bf2](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/db03bf2)
 - **Date:** 2025-06-24 22:33:14 +0200
 - **Author:** Johan Sörell
