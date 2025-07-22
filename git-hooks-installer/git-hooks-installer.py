@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # githooks-install.py
-# version 8.0
+# version 0.5
 # Author: Johan Sörell
 # First version Date: 2025-05-30
-# Updated: 2025-06-24
+# Updated: 2025-07-22
+# Bugfixes and improvements
+# - will fix that the merge branch is always the branch we are currently on
+# - will fix that the branch name is always the same, even if we force update
+
 # License: MIT License
 """
 This script sets up git hooks, scripts, and documentation in a specified Git repository.
@@ -375,6 +379,45 @@ def install_ci_cd_files(target_repo: Path, source_dir: Path, platform: str) -> L
     
     return installed_files
 
+def install_developer_setup_files(target_repo: Path, source_dir: Path) -> List[str]:
+    """
+    Install developer setup scripts in repository root.
+    
+    Returns:
+        List of files that were installed/updated
+    """
+    installed_files = []
+    setup_source_dir = source_dir / "developer-setup"
+    
+    if not setup_source_dir.exists():
+        logger.debug("No developer-setup directory found")
+        return installed_files
+    
+    # Files to copy to repository root
+    setup_files = [
+        ("setup-githooks.sh", "setup-githooks.sh"),
+        ("setup-githooks.ps1", "setup-githooks.ps1"),
+        ("SETUP-GITHOOKS.md", "SETUP-GITHOOKS.md")
+    ]
+    
+    for source_name, dest_name in setup_files:
+        source_file = setup_source_dir / source_name
+        dest_file = target_repo / dest_name
+        
+        if source_file.exists():
+            # Check if update needed
+            if not dest_file.exists() or not filecmp.cmp(source_file, dest_file, shallow=False):
+                shutil.copy2(source_file, dest_file)
+                # Make shell scripts executable
+                if dest_name.endswith('.sh'):
+                    dest_file.chmod(0o755)
+                logger.info(f"📄 Installed developer setup: {dest_name}")
+                installed_files.append(dest_name)
+            else:
+                logger.debug(f"Developer setup file already up-to-date: {dest_name}")
+    
+    return installed_files
+
 # ADD HERE - After install_ci_cd_files function
 def update_gitignore_file(repo_path: Path) -> None:
     """Update .gitignore with required patterns for git hooks."""
@@ -487,6 +530,9 @@ def merge_branch(repo_path: Path, branch_name: str, target_branch: str) -> bool:
     merge_result = run_git_command(repo_path, ["merge", branch_name, "--no-ff", "-m", f"Merge branch '{branch_name}' - Update git hooks and scripts"])
     if merge_result.returncode != 0:
         logger.error(f"Failed to merge: {merge_result.stderr}")
+        # Clean up any staged files
+        logger.warning("⚠️  Merge failed, cleaning up...")
+        run_git_command(repo_path, ["merge", "--abort"], check=False)
         return False
     
     logger.info(f"✅ Merged '{branch_name}' into '{target_branch}'")
@@ -631,16 +677,9 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
     # If we need to make ANY changes, create branch first
     branch_name = None
     if need_branch:
-        # Switch to default branch first
-        if original_branch != default_branch:
-            checkout_result = run_git_command(target_repo, ["checkout", default_branch])
-            if checkout_result.returncode != 0:
-                logger.error(f"Failed to checkout {default_branch}: {checkout_result.stderr}")
-                return False
-        
-        # Pull latest changes if remote exists
+        # Pull latest changes on current branch if remote exists
         if has_remote(target_repo):
-            logger.info(f"📥 Pulling latest changes from {default_branch}...")
+            logger.info(f"📥 Pulling latest changes on {original_branch}...")
             pull_result = run_git_command(target_repo, ["pull"], check=False)
             if pull_result.returncode != 0:
                 logger.warning(f"Pull failed (might be okay if no upstream): {pull_result.stderr}")
@@ -705,6 +744,14 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
             logger.debug("No GitHub/GitLab remote detected, skipping CI/CD setup")
     else:
         logger.info("⏭️  Skipping CI/CD installation (--no-ci flag)")
+
+    # Install developer setup files
+    setup_files = install_developer_setup_files(target_repo, source_dir)
+    if setup_files:
+        files_to_commit.extend(setup_files)
+        logger.info("✅ Installed developer setup scripts")
+    else:
+        logger.debug("No developer setup files found or already up-to-date")
     
     # Save version info if we made changes
     if need_branch and (scripts_copied or docs_copied or hooks_need_update or force):
@@ -764,12 +811,12 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
     
     # Handle merging if we created a branch
     if branch_name and auto_merge:
-        logger.info(f"🔀 Auto-merging to {default_branch}...")
-        if merge_branch(target_repo, branch_name, default_branch):
+        logger.info(f"🔀 Auto-merging to {original_branch}...")
+        if merge_branch(target_repo, branch_name, original_branch):
             if push and has_remote(target_repo):
                 push_result = run_git_command(target_repo, ["push"], check=False)
                 if push_result.returncode == 0:
-                    logger.info(f"✅ Pushed merged changes to remote {default_branch}")
+                    logger.info(f"✅ Pushed merged changes to remote {original_branch}")
                     # Delete remote branch if it was pushed
                     if pushed:
                         run_git_command(target_repo, ["push", "origin", "--delete", branch_name], check=False)
@@ -777,8 +824,8 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
                     logger.warning("Failed to push merged changes")
     elif branch_name:
         logger.info(f"ℹ️  Branch '{branch_name}' created with changes.")
-        logger.info(f"   To merge manually: git checkout {default_branch} && git merge {branch_name}")
-    
+        logger.info(f"   To merge manually: git checkout {original_branch} && git merge {branch_name}")
+
     # Return to original branch if different from current
     if branch_name:
         current = get_current_branch(target_repo)

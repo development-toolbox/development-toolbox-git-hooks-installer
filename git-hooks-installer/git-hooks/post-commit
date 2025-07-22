@@ -1,5 +1,7 @@
 #!/bin/bash
 # post-commit
+# Version: 0.5
+# Installed by: git-hooks-installer
 
 set -e  # Exit script if any command fails
 
