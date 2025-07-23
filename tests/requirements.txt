@@ -1,3 +1,4 @@
+pip-requirements
 pytest
 pytest-cov
 pytest-html
@@ -11,3 +12,10 @@ isort
 bandit
 ansi2html
 pylint-json2html
+
+# For test runner scripts, make sure to use --exclude or --src as appropriate
+# Example for pytest: pytest --maxfail=1 --disable-warnings --tb=short git-hooks-installer/
+# Example for flake8: flake8 git-hooks-installer/
+# Example for mypy: mypy git-hooks-installer/
+# Example for ruff: ruff git-hooks-installer/
+# Example for pylint: pylint git-hooks-installer/
