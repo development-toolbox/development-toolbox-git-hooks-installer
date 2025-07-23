@@ -1,0 +1,4 @@
+# Requirements is currently not beeing used for setup_git_hooks.py
+# but it is kept for reference and future use.
+# If you want to use it, you can install the requirements with:
+# pip install -r requirements.txt
