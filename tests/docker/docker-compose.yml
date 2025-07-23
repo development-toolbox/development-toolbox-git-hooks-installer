@@ -2,19 +2,21 @@ version: '3.8'
 services:
   ubuntu:
     build:
-      context: .
-      dockerfile: Dockerfile.ubuntu
+      # Set context to project root
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.ubuntu
     volumes:
       - ../..:/app
   almalinux9:
     build:
-      context: .
-      dockerfile: Dockerfile.almalinux9
+      # Set context to project root
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.almalinux9
     volumes:
       - ../..:/app
   almalinux10:
     build:
-      context: .
-      dockerfile: Dockerfile.almalinux10
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.almalinux10
     volumes:
       - ../..:/app
