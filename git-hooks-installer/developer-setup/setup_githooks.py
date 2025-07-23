@@ -254,59 +254,115 @@ def main():
     hooks_dir = repo_root / ".git" / "hooks"
     hooks_dir.mkdir(parents=True, exist_ok=True)
     
-    # Check for hook template
-    if args.template_dir:
-        # User specified template directory
-        template_paths = [args.template_dir / "post-commit"]
-    else:
-        # Auto-detect template locations
-        template_paths = [
-            repo_root / "developer-setup" / "templates" / "post-commit",
-            repo_root / "templates" / "post-commit",
-            repo_root / "scripts" / "git-hooks" / "post-commit",
-        ]
-    
-    template_path = None
-    for path in template_paths:
-        if path.exists():
-            template_path = path
-            break
-    
-    if not template_path:
-        print_color("❌ Error: No hook template found", Colors.RED)
-        print("Looked in:")
-        for path in template_paths:
-            print(f"  - {path}")
-        return 1
-    
-    # Check existing hook
-    hook_path = hooks_dir / "post-commit"
-    hook_status = check_hook_version(hook_path)
-    
-    if hook_status == 0:
-        print_color(f"✅ Git hooks already installed and up-to-date (v{INSTALLER_VERSION})", 
-                   Colors.GREEN)
-        hook_kept_existing = True
-    elif hook_status == 1:
-        print_color("⚠️  Git hooks exist but are a different version", Colors.YELLOW)
-        print("   Your hook might have custom modifications or be outdated")
-        if args.force:
-            response = 'y'
-        else:
-            response = input(f"   Replace with standard hook v{INSTALLER_VERSION}? (y/N) ")
+    # Detect template directory robustly
+    script_dir = Path(__file__).resolve().parent
+    candidate_dirs = []
 
-        if response.lower() == 'y':
-            install_hook_from_template(template_path, hook_path)
-            print_color(f"✅ Updated post-commit hook to v{INSTALLER_VERSION}", Colors.GREEN)
-            hook_updated = True
+    if args.template_dir:
+        candidate_dirs.append(args.template_dir)
+    # 1. developer-setup/templates relative to script location
+    candidate_dirs.append(script_dir / "templates")
+    # 2. developer-setup/templates relative to repo root
+    candidate_dirs.append(repo_root / "developer-setup" / "templates")
+    # 3. templates at repo root
+    candidate_dirs.append(repo_root / "templates")
+    # 4. scripts/git-hooks at repo root
+    candidate_dirs.append(repo_root / "scripts" / "git-hooks")
+
+    template_dir = None
+    checked_dirs = []
+    for d in candidate_dirs:
+        checked_dirs.append(str(d))
+        if d.exists() and d.is_dir():
+            template_dir = d
+            break
+
+    if not template_dir:
+        print_color("❌ Error: No hook template directory found", Colors.RED)
+        print("Looked in:")
+        for d in checked_dirs:
+            print(f"  - {d}")
+        print_color("Please ensure your template directory exists in one of the above locations or specify with --template-dir.", Colors.YELLOW)
+        return 1
+
+    # Copy all hook templates from the found directory
+    hook_templates = list(template_dir.glob("*"))
+    if not hook_templates:
+        print_color(f"❌ Error: No hook templates found in {template_dir}", Colors.RED)
+        return 1
+
+    if args.check_only:
+        # DRY-RUN: No changes will be made below this line!
+        print_color("🔍 --check-only: Dry-run, showing what would happen (no changes will be made)", Colors.YELLOW)
+        # Hooks
+        for template_path in hook_templates:
+            hook_name = template_path.name
+            hook_path = hooks_dir / hook_name
+            status = check_hook_version(hook_path)
+            if status == 0:
+                print_color(f"✅ {hook_name} is up-to-date (v{INSTALLER_VERSION}) - would keep", Colors.GREEN)
+            elif status == 1:
+                print_color(f"⚠️  {hook_name} exists but is a different version - would update", Colors.YELLOW)
+            else:
+                print_color(f"❌ {hook_name} is not installed - would install", Colors.RED)
+        # Git config
+        print_color("⚙️  Checking git config...", Colors.GREEN)
+        # Simulate git user.name
+        result = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True)
+        if not result.stdout.strip():
+            print_color("   No git user.name set - would prompt to set", Colors.YELLOW)
         else:
-            print("Keeping existing hook")
-            hook_kept_existing = True
+            print_color(f"   ✅ Git user: {result.stdout.strip()} (would keep)", Colors.GREEN)
+        # Simulate git user.email
+        result = subprocess.run(["git", "config", "user.email"], capture_output=True, text=True)
+        if not result.stdout.strip():
+            print_color("   No git user.email set - would prompt to set", Colors.YELLOW)
+        else:
+            print_color(f"   ✅ Git email: {result.stdout.strip()} (would keep)", Colors.GREEN)
+        # Python
+        print_color("🐍 Checking Python installation...", Colors.GREEN)
+        python_found = False
+        for cmd in ["python3", "python"]:
+            try:
+                result = subprocess.run([cmd, "--version"], capture_output=True, text=True)
+                if result.returncode == 0:
+                    print_color(f"   ✅ {cmd} found: {result.stdout.strip()} (would use)", Colors.GREEN)
+                    python_found = True
+                    break
+            except FileNotFoundError:
+                continue
+        if not python_found:
+            print_color("   ❌ Python not found! Would prompt to install Python 3", Colors.RED)
+        # Dependencies
+        req_file = repo_root / "requirements.txt"
+        if not req_file.exists():
+            print_color("📦 No requirements.txt found in project (would skip dependency install)", Colors.YELLOW)
+        else:
+            print_color("📦 Project has requirements.txt (would prompt to install dependencies)", Colors.GREEN)
+        # Final summary
+        print()
+        print_color("=== Check-Only Mode Complete ===", Colors.GREEN)
+        print()
+        print_color("No changes were made. This was a dry-run (--check-only).", Colors.YELLOW)
+        print("To actually install or update hooks, run this script without --check-only.")
+        print()
+        return 0
     else:
-        print_color(f"📝 Installing post-commit hook v{INSTALLER_VERSION}...", Colors.YELLOW)
-        install_hook_from_template(template_path, hook_path)
-        print_color("✅ Installed post-commit hook", Colors.GREEN)
-        hook_installed = True
+        hook_status = None  # Track hook status for later use
+        for template_path in hook_templates:
+            hook_name = template_path.name
+            hook_path = hooks_dir / hook_name
+            # Check current hook version before installing
+            current_status = check_hook_version(hook_path)
+            if current_status == 2:
+                hook_installed = True
+            elif current_status == 1:
+                hook_updated = True
+            elif current_status == 0:
+                hook_kept_existing = True
+            hook_status = current_status  # Save last status for summary
+            install_hook_from_template(template_path, hook_path)
+            print_color(f"✅ Installed {hook_name} hook from template", Colors.GREEN)
     
     # Check other hooks
     print_color("🔍 Checking for other hooks...", Colors.GREEN)

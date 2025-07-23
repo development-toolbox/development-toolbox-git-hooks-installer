@@ -3,8 +3,11 @@ pytest-cov
 pytest-html
 ruff
 flake8
+flake8-html
 pylint
 mypy
 black
 isort
 bandit
+ansi2html
+pylint-json2html

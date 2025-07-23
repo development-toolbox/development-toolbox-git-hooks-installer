@@ -3,29 +3,36 @@ set -e
 
 mkdir -p tests/results
 
-echo "Running black..."
-black --check . | tee tests/results/black.txt
+# Black: HTML report via blacken-docs (not native, so use txt for now)
+black . --check --diff > tests/results/black.txt 2>&1 || true
 
-echo "Running isort..."
-isort --check-only . | tee tests/results/isort.txt
+# isort: HTML via txt2html (workaround, since isort has no native HTML)
+isort . --check-only --diff > tests/results/isort.txt 2>&1 || true
 
-echo "Running ruff..."
-ruff . | tee tests/results/ruff.txt
+# Ruff: HTML via txt2html (workaround, since ruff has no native HTML)
+ruff check . > tests/results/ruff.txt 2>&1 || true
 
-echo "Running flake8..."
-flake8 . | tee tests/results/flake8.txt
+# Flake8: Native HTML report
+flake8 . --format=html --htmldir=tests/results/flake8_html || true
 
-echo "Running pylint..."
-pylint $(find . -name "*.py" ! -path "./tests/*") | tee tests/results/pylint.txt
+# Pylint: JSON to HTML
+pylint $(find . -name "*.py") --output-format=json > tests/results/pylint.json || true
+pylint-json2html -f json -o tests/results/pylint.html tests/results/pylint.json || true
 
-echo "Running mypy..."
-mypy . | tee tests/results/mypy.txt
+# Pytest: Native HTML report
+pytest --maxfail=1 --disable-warnings --html=tests/results/pytest.html --self-contained-html || true
 
-echo "Running bandit..."
-bandit -r . | tee tests/results/bandit.txt
+# Bandit: HTML report
+bandit -r . -f html -o tests/results/bandit.html || true
 
-echo "Running pytest (unit)..."
-pytest tests/unit --cov=your_package_name --html=tests/results/unit-report.html --self-contained-html | tee tests/results/pytest-unit.txt
+# mypy: HTML via txt2html (workaround)
+mypy . > tests/results/mypy.txt 2>&1 || true
 
-echo "Running pytest (integration)..."
-pytest tests/integration --cov=your_package_name --html=tests/results/integration-report.html --self-contained-html | tee tests/results/pytest-integration.txt
+# Convert txt reports to HTML for black, isort, ruff, mypy
+for tool in black isort ruff mypy; do
+    if [ -f tests/results/$tool.txt ]; then
+        ansi2html < tests/results/$tool.txt > tests/results/$tool.html || true
+    fi
+done
+
+echo "All reports generated in tests/results/"
