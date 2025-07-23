@@ -7,6 +7,7 @@ Each commit links to its detailed log.
 
 | Commit Hash | Date & Time       | Author       | Message           |
 |-------------|------------------|--------------|-------------------|
+| [7087c8cb](./7087c8cb.md) | 2025-07-23 20:59 | Johan Sörell | test(config): scope all test and linting to git-hooks-installer directory |
 | [cf5c14f2](./cf5c14f2.md) | 2025-07-23 19:09 | Johan Sörell | chore(script,manually-updated): update updated script |
 | [9d1cc6bc](./9d1cc6bc.md) | 2025-07-23 19:04 | Johan Sörell | fix(test,ci): improve test and Docker reliability, add flake8-html, and document troubleshooting |
 | [242ee584](./242ee584.md) | 2025-07-23 15:04 | Johan Sörell | feat(test,ci,docs): add Docker-based testing environment, HTML test results, and AI chat log instructions |

@@ -1,17 +1,17 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-07-23 19:09:44
+> **Generated on:** 2025-07-23 20:59:41
 
 > **Branch:** `bugfix/git-hooks-installer-switches-to-main`
 
 ## 📦 Branches
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
-| bugfix/git-hooks-installer-switches-to-main | cf5c14f | Johan SÃ¶rell |
+| bugfix/git-hooks-installer-switches-to-main | 7087c8c | Johan SÃ¶rell |
 | fetures/update-docs | dbaea18 | Johan SÃ¶rell |
 | main | 5b5b53f | Johan SÃ¶rell |
 | origin | 5b5b53f | Johan SÃ¶rell |
-| origin/bugfix/git-hooks-installer-switches-to-main | bb074cd | Johan SÃ¶rell |
+| origin/bugfix/git-hooks-installer-switches-to-main | 83d97f2 | Johan SÃ¶rell |
 | origin/fetures/update-docs | dbaea18 | Johan SÃ¶rell |
 | origin/main | 5b5b53f | Johan SÃ¶rell |
 
@@ -24,6 +24,16 @@
 |------------|-------------|---------|
 
 ## 📁 Commit Log
+### ✅ Commit: [7087c8c](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/7087c8c)
+- **Date:** 2025-07-23 20:59:40 +0200
+- **Author:** Johan SÃ¶rell
+- **Message:** test(config): scope all test and linting to git-hooks-installer directory
+
+### ✅ Commit: [83d97f2](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/83d97f2)
+- **Date:** 2025-07-23 19:09:43 +0200
+- **Author:** Johan SÃ¶rell
+- **Message:** Update commit timeline: cf5c14f2b5d8f8dba8b2e913c4684375a13aaa91
+
 ### ✅ Commit: [cf5c14f](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/cf5c14f)
 - **Date:** 2025-07-23 19:09:43 +0200
 - **Author:** Johan SÃ¶rell
