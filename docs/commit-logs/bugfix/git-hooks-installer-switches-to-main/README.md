@@ -7,4 +7,5 @@ Each commit links to its detailed log.
 
 | Commit Hash | Date & Time       | Author       | Message           |
 |-------------|------------------|--------------|-------------------|
+| [2fbb7e64](./2fbb7e64.md) | 2025-07-23 13:19 | Johan Sörell | feat(developer-setup): add developer onboarding scripts |
 | [51f260aa](./51f260aa.md) | 2025-07-22 22:27 | Johan Sörell | fix(installer): major bugfixes and add developer setup scripts |
