@@ -1,0 +1,10 @@
+pytest
+pytest-cov
+pytest-html
+ruff
+flake8
+pylint
+mypy
+black
+isort
+bandit
