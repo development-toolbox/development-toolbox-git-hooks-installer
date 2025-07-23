@@ -1,22 +1,30 @@
-
 services:
   ubuntu:
     build:
       # Set context to project root
       context: ../..
       dockerfile: tests/docker/Dockerfile.ubuntu
+    environment:
+      - OS_NAME=ubuntu
     volumes:
       - ../..:/app
+      - ../../tests/results/ubuntu:/app/tests/results/ubuntu
   almalinux9:
     build:
       # Set context to project root
       context: ../..
       dockerfile: tests/docker/Dockerfile.almalinux9
+    environment:
+      - OS_NAME=almalinux9
     volumes:
       - ../..:/app
+      - ../../tests/results/almalinux9:/app/tests/results/almalinux9
   almalinux10:
     build:
       context: ../..
       dockerfile: tests/docker/Dockerfile.almalinux10
+    environment:
+      - OS_NAME=almalinux10
     volumes:
       - ../..:/app
+      - ../../tests/results/almalinux10:/app/tests/results/almalinux10

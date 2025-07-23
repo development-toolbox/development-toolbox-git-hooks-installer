@@ -17,6 +17,7 @@ from githooks_utils import (
     get_commits,
 )
 
+
 def generate_git_timeline():
     branch_name = os.getenv("BRANCH_NAME")
 
@@ -75,5 +76,7 @@ def generate_git_timeline():
     except subprocess.CalledProcessError:
         print("⚠️ No changes detected. Skipping commit.")
 
+
+# Main entry point
 if __name__ == "__main__":
     generate_git_timeline()
