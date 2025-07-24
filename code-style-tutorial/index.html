@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Code Style & Linting Tutorial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css">
+  <style>
+    body { background: #f5f5f5; padding: 32px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .ant-card { max-width: 900px; margin: 0 auto 32px auto; }
+    .ant-list-item { font-size: 1.1em; }
+    .ant-tag { font-size: 1em; }
+    .desc { color: #888; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="ant-card ant-card-bordered">
+    <div class="ant-card-head">
+      <div class="ant-card-head-title">
+        <h1>🐍 Python Code Style & Linting Tutorial</h1>
+      </div>
+    </div>
+    <div class="ant-card-body">
+      <p>
+        This site is a practical guide to resolving common Python code issues flagged by <b>flake8</b>, <b>pylint</b>, <b>black</b>, and other tools.<br>
+        Each section includes real-world examples, explanations, and best practices.
+      </p>
+      <ul class="ant-list ant-list-bordered">
+        <li class="ant-list-item">
+          <a href="long-lines.html"><span class="ant-tag ant-tag-warning">E501</span> Long Lines</a>
+          <span class="desc">How to split long lines and keep code readable</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="indentation.html"><span class="ant-tag ant-tag-warning">E128/E127</span> Indentation & Visual Indent</a>
+          <span class="desc">Fixing continuation line and alignment issues</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="trailing-whitespace.html"><span class="ant-tag ant-tag-error">W291/W293</span> Trailing Whitespace & Blank Lines</a>
+          <span class="desc">How to spot and remove invisible whitespace</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="imports.html"><span class="ant-tag ant-tag-success">E402/F401</span> Import Order & Unused Imports</a>
+          <span class="desc">Organizing and cleaning up imports</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="naming.html"><span class="ant-tag ant-tag-cyan">N802/N803</span> Naming Conventions</a>
+          <span class="desc">Class, function, and variable naming best practices</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="complexity.html"><span class="ant-tag ant-tag-magenta">C901</span> Code Complexity</a>
+          <span class="desc">How to refactor complex functions and reduce cyclomatic complexity</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="docstrings.html"><span class="ant-tag ant-tag-blue">D100/D101</span> Docstrings & Documentation</a>
+          <span class="desc">Writing clear docstrings for modules, classes, and functions</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="typing.html"><span class="ant-tag ant-tag-purple">ANN201</span> Type Annotations</a>
+          <span class="desc">Adding and checking type hints for better code safety</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="exceptions.html"><span class="ant-tag ant-tag-volcano">E722/W0702</span> Exception Handling</a>
+          <span class="desc">Catching exceptions properly and avoiding bare excepts</span>
+        </li>
+        <li class="ant-list-item">
+          <a href="misc.html"><span class="ant-tag ant-tag-geekblue">Other</span> Miscellaneous Issues</a>
+          <span class="desc">Other common linter and style issues</span>
+        </li>
+      </ul>
+      <div style="margin-top:32px;">
+        <b>How to use:</b> Click a topic above to see before/after code, explanations, and how to fix each issue.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

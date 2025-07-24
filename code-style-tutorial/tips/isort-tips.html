@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tip: Automate Python Imports with isort</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css">
+  <style>
+    body { background: #f0f2f5; padding: 32px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .ant-card { max-width: 800px; margin: 0 auto 32px auto; }
+    .cmd-block { background: #222; color: #fff; padding: 12px 16px; border-radius: 6px; font-size: 1em; margin: 8px 0; }
+    .cmd-block code { color: #bae7ff; }
+    .highlight { background: #fffbe6; color: #ad6800; border-radius: 2px; padding: 0 2px; }
+    .ant-alert-info { background: #e6f7ff; border-color: #91d5ff; color: #0050b3; margin-bottom: 16px; }
+    .ant-alert-success { background: #f6ffed; border-color: #b7eb8f; color: #237804; margin-bottom: 16px; }
+    .ant-tag { font-size: 1em; }
+    ul { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="ant-card ant-card-bordered">
+    <div class="ant-card-head">
+      <div class="ant-card-head-title">
+        <h1>💡 Tip: Automate Python Imports with <span class="highlight">isort</span></h1>
+      </div>
+    </div>
+    <div class="ant-card-body">
+      <div class="ant-alert ant-alert-info">
+        <b>isort</b> automatically sorts and groups your Python imports for you, keeping your codebase clean and consistent.
+      </div>
+      <h2>🚀 Quick Start</h2>
+      <div class="cmd-block"><code>$ pip install isort</code></div>
+      <div class="cmd-block"><code>$ isort your_file.py</code></div>
+      <div class="cmd-block"><code>$ isort .</code> <span style="color:#888;"># all files in the project</span></div>
+      <h2>⚙️ GitHub Actions Automation</h2>
+      <div class="ant-alert ant-alert-success">
+        <b>Automate isort in your CI/CD pipeline!</b>
+      </div>
+      <pre class="cmd-block" style="background:#001529;">
+<code>
+# .github/workflows/isort.yml
+name: isort check
+
+on: [push, pull_request]
+
+jobs:
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install isort
+        run: pip install isort
+      - name: Run isort check
+        run: isort . --check --diff
+</code>
+      </pre>
+      <ul>
+        <li><b>--check</b> makes isort only report issues, not change files.</li>
+        <li><b>--diff</b> shows what would change.</li>
+      </ul>
+      <div class="ant-alert ant-alert-info">
+        <b>Tip:</b> Add <code>isort</code> to your <code>pre-commit</code> config for local automation!
+      </div>
+      <h2>🔗 Resources</h2>
+      <ul>
+        <li><a href="https://pycqa.github.io/isort/" target="_blank">isort Documentation</a></li>
+        <li><a href="https://github.com/pycqa/isort" target="_blank">isort on GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

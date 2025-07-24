@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Style: Indentation & Visual Indent</title>
+  <style>
+    pre { background: #f8f8f8; padding: 1em; border-radius: 5px; }
+    .bad { color: #b71c1c; }
+    .good { color: #1b5e20; }
+  </style>
+</head>
+<body>
+  <h1>Python Style: Indentation & Visual Indent</h1>
+  <p>Continuation lines inside parentheses, brackets, or braces should be indented for clarity.</p>
+  <h2>❌ Bad Example (E128)</h2>
+  <pre class="bad">
+result = some_function(arg1, arg2,
+arg3, arg4)
+  </pre>
+  <h2>✅ Good Example</h2>
+  <pre class="good">
+result = some_function(
+    arg1, arg2,
+    arg3, arg4
+)
+  </pre>
+</body>
+</html>

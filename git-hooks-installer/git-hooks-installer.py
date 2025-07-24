@@ -223,8 +223,17 @@ class GitHooksInstaller:
         current_docs_hash = self.calculate_directory_hash(docs_src)
 
         # Compare with stored hashes
-        scripts_need_update = current_scripts_hash != version_info.get("scripts_hash", "") if scripts_src.exists() else False
-        docs_need_update = current_docs_hash != version_info.get("docs_hash", "") if docs_src.exists() else False
+        scripts_need_update = (
+            current_scripts_hash != version_info.get("scripts_hash", "")
+        )
+        if scripts_src.exists():
+            scripts_need_update = current_scripts_hash != version_info.get("scripts_hash", "")
+        else:
+            scripts_need_update = False
+        if docs_src.exists():
+            docs_need_update = current_docs_hash != version_info.get("docs_hash", "")
+        else:
+            docs_need_update = False
 
         if not hooks_need_update and not scripts_need_update and not docs_need_update:
             logger.debug("No updates needed - all components are up-to-date")
@@ -548,7 +557,16 @@ def merge_branch(repo_path: Path, branch_name: str, target_branch: str) -> bool:
         return False
 
     # Merge the feature branch
-    merge_result = run_git_command(repo_path, ["merge", branch_name, "--no-ff", "-m", f"Merge branch '{branch_name}' - Update git hooks and scripts"])
+    merge_result = run_git_command(
+        repo_path,
+        [
+            "merge",
+            branch_name,
+            "--no-ff",
+            "-m",
+            f"Merge branch '{branch_name}' - Update git hooks and scripts",
+        ],
+    )
     if merge_result.returncode != 0:
         logger.error(f"Failed to merge: {merge_result.stderr}")
         # Clean up any staged files
@@ -617,7 +635,13 @@ def get_conventional_branch_name(hooks_need_update: bool,
         return f"feat/update-githooks-installation-{timestamp}"
 
 
-def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = False, push: bool = True, force: bool = False, no_ci: bool = False):
+def setup_git_hooks(
+        target_repo: Path,
+        source_dir: Path,
+        auto_merge: bool = False,
+        push: bool = True,
+        force: bool = False,
+        no_ci: bool = False):
     """
     Main function to set up git hooks in a target repository.
 
@@ -648,7 +672,8 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
 
     # Check for uncommitted changes
     if has_uncommitted_changes(target_repo):
-        logger.error("❌ Target repository has uncommitted changes. Please commit or stash them first.")
+        logger.error("❌ Target repository has uncommitted changes."
+                     " Please commit or stash them first.")
         return False
 
     logger.info("🔎 Checking for updates...")
@@ -676,7 +701,11 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
         raise ValueError(f"🚫 Unsafe target hooks directory: {hooks_dst}")
 
     # Check if update is needed - BEFORE doing anything!
-    hooks_need_update, scripts_need_update, docs_need_update = installer.check_if_update_needed(hooks_dst)
+    (
+      hooks_need_update,
+      scripts_need_update,
+      docs_need_update
+    ) = installer.check_if_update_needed(hooks_dst)
 
     if not force and not hooks_need_update and not scripts_need_update and not docs_need_update:
         logger.info("✅ Everything is already up-to-date!")
@@ -840,12 +869,17 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
                     logger.info(f"✅ Pushed merged changes to remote {original_branch}")
                     # Delete remote branch if it was pushed
                     if pushed:
-                        run_git_command(target_repo, ["push", "origin", "--delete", branch_name], check=False)
+                        run_git_command(
+                            target_repo,
+                            ["push", "origin", "--delete", branch_name],
+                            check=False,
+                        )
                 else:
                     logger.warning("Failed to push merged changes")
     elif branch_name:
         logger.info(f"ℹ️  Branch '{branch_name}' created with changes.")
-        logger.info(f"   To merge manually: git checkout {original_branch} && git merge {branch_name}")
+        logger.info(f"   To merge manually: git checkout {original_branch}"
+                    "&& git merge {branch_name}")
 
     # Return to original branch if different from current
     if branch_name:
@@ -871,13 +905,15 @@ def setup_git_hooks(target_repo: Path, source_dir: Path, auto_merge: bool = Fals
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Check and update git hooks, scripts, and documentation in a target Git repository.",
+        description="Check and update git hooks, "
+                    "scripts, and documentation in a target Git repository.",
         epilog="Example: python githooks-install.py /path/to/repo --source /path/to/hooks-source"
     )
     parser.add_argument("target_repo", type=str, nargs='?', default=os.getenv("TARGET_REPO"),
                         help="Path to the target Git repository")
     parser.add_argument("--source", type=str, default=os.getenv("GITHOOKS_SOURCE", "."),
-                        help="Path to the source directory containing git-hooks/, scripts/, and docs/")
+                        help="Path to the source directory containing git-hooks/,"
+                             " scripts/, and docs/")
     parser.add_argument("--auto-merge", action="store_true",
                         help="Automatically merge the changes to the default branch")
     parser.add_argument("--no-push", action="store_true",
@@ -886,7 +922,7 @@ if __name__ == "__main__":
                         help="Force reinstall even if versions match")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     parser.add_argument("--no-ci", action="store_true",
-                    help="Skip CI/CD file installation")
+                        help="Skip CI/CD file installation")
 
     args = parser.parse_args()
 

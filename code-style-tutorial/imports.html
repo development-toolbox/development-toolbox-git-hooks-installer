@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Style: Import Order & Unused Imports</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css">
+  <style>
+    body { background: #f0f2f5; padding: 32px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .ant-card { max-width: 900px; margin: 0 auto 32px auto; }
+    .bad, .good { font-family: 'Fira Mono', 'Consolas', monospace; font-size: 1em; }
+    .bad { background: #fff0f6; border-left: 4px solid #d4380d; padding: 16px; margin-bottom: 8px; }
+    .good { background: #e6fffb; border-left: 4px solid #08979c; padding: 16px; }
+    .explain { margin: 16px 0; }
+    .ant-alert { margin-bottom: 16px; }
+    .ant-tag { font-size: 1em; }
+    .isort-demo { background: #f0f5ff; border-left: 4px solid #2f54eb; padding: 16px; margin: 16px 0; }
+    .cmd-block { background: #222; color: #fff; padding: 12px 16px; border-radius: 6px; font-size: 1em; margin: 8px 0; }
+    .cmd-block code { color: #bae7ff; }
+    .step { margin-bottom: 12px; }
+    .highlight { background: #fffbe6; color: #ad6800; border-radius: 2px; padding: 0 2px; }
+    .ant-alert-info { background: #e6f7ff; border-color: #91d5ff; color: #0050b3; }
+    .ant-alert-warning { background: #fffbe6; border-color: #ffe58f; color: #ad6800; }
+    .ant-tag-error { background: #fff1f0; color: #cf1322; border-color: #ffa39e; }
+    .ant-tag-success { background: #f6ffed; color: #389e0d; border-color: #b7eb8f; }
+    .backlinks { margin-top: 32px; }
+    .backlinks a { margin-right: 18px; color: #2f54eb; text-decoration: none; font-weight: 500; }
+    .backlinks a:hover { text-decoration: underline; }
+    .tip-link { display: inline-block; margin-top: 8px; }
+    .isort-list { margin: 0 0 0 24px; }
+  </style>
+</head>
+<body>
+  <div class="ant-card ant-card-bordered">
+    <div class="ant-card-head">
+      <div class="ant-card-head-title">
+        <h1>Python Style: Import Order & Unused Imports</h1>
+      </div>
+    </div>
+    <div class="ant-card-body">
+      <div class="ant-alert ant-alert-warning">
+        <strong>Imports</strong> should be grouped: standard library, third-party, then local. Remove unused imports.
+      </div>
+      <div class="explain">
+        <h2>❌ Bad Example</h2>
+        <pre class="bad">
+import os, sys
+import requests
+from .my_module import foo
+import json
+
+def bar():
+    print("Hello")
+        </pre>
+        <div>
+          <span class="ant-tag ant-tag-error">Problem</span>
+          <span>Multiple imports on one line, unused imports, and wrong order.</span>
+        </div>
+      </div>
+      <div class="explain">
+        <h2>✅ Good Example</h2>
+        <pre class="good">
+import os
+import sys
+import json
+
+import requests
+
+from .my_module import foo
+
+def bar():
+    print("Hello")
+        </pre>
+        <div>
+          <span class="ant-tag ant-tag-success">Solution</span>
+          <span>One import per line, grouped and sorted, unused imports removed.</span>
+        </div>
+      </div>
+      <div class="isort-demo">
+        <h2 style="margin-top:0;">💡 How to Fix with <b>isort</b></h2>
+        <div class="step">
+          <b>1. Install isort:</b>
+          <div class="cmd-block"><code>$ pip install isort</code></div>
+        </div>
+        <div class="step">
+          <b>2. Sort a single file:</b>
+          <div class="cmd-block"><code>$ isort your_file.py</code></div>
+        </div>
+        <div class="step">
+          <b>3. Sort all files in your project:</b>
+          <div class="cmd-block"><code>$ isort .</code></div>
+        </div>
+        <div class="step">
+          <b>What does isort do?</b>
+          <ul class="isort-list">
+            <li>Groups imports into <span class="highlight">standard library</span>, <span class="highlight">third-party</span>, and <span class="highlight">local</span> imports.</li>
+            <li>Sorts each group alphabetically.</li>
+            <li>Ensures one import per line.</li>
+            <li>Removes duplicates and (optionally) unused imports.</li>
+          </ul>
+        </div>
+        <div class="step">
+          <b>More isort tips & automation:</b>
+          <ul>
+            <li>
+              <a href="tips/isort/install.html" target="_blank">Install isort (detailed)</a>
+            </li>
+            <li>
+              <a href="tips/isort/usage.html" target="_blank">Usage patterns & CLI options</a>
+            </li>
+            <li>
+              <a href="tips/isort/pre-commit.html" target="_blank">Pre-commit hook example</a>
+            </li>
+            <li>
+              <a href="tips/isort/github-actions.html" target="_blank">GitHub Actions workflow</a>
+            </li>
+            <li>
+              <a href="tips/isort/editor-integration.html" target="_blank">Editor integration</a>
+            </li>
+          </ul>
+        </div>
+        <div class="ant-alert ant-alert-info">
+          <b>Tip:</b> Add <span class="cmd-block" style="display:inline;padding:2px 6px;font-size:0.95em;">isort</span> to your pre-commit hooks or configure your editor to run it on save for consistent imports!
+        </div>
+      </div>
+      <div class="backlinks">
+        <a href="index.html">&larr; Back to Tutorial Index</a>
+        <a href="tips/isort-tips.html" target="_blank">isort Automation Tips</a>
+        <a href="../commit-refactor-long-lines-and-style.md" target="_blank">Related Commit Example</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
