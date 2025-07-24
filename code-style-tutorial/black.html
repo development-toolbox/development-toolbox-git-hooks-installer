@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How to Use Black for Python Formatting</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css">
+  <style>
+    body { background: #f0f2f5; padding: 32px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .ant-card { max-width: 900px; margin: 0 auto 32px auto; }
+    .cmd-block { background: #222; color: #fff; padding: 12px 16px; border-radius: 6px; font-size: 1em; margin: 8px 0; }
+    .cmd-block code { color: #bae7ff; }
+    .ant-alert-info { background: #e6f7ff; border-color: #91d5ff; color: #0050b3; margin-bottom: 16px; }
+    .ant-alert-success { background: #f6ffed; border-color: #b7eb8f; color: #237804; margin-bottom: 16px; }
+    .ant-tag { font-size: 1em; }
+    .backlinks { margin-top: 32px; }
+    .backlinks a { margin-right: 18px; color: #2f54eb; text-decoration: none; font-weight: 500; }
+    .backlinks a:hover { text-decoration: underline; }
+    .example-section { margin: 24px 0; }
+    pre { background: #f8f8f8; border-radius: 6px; padding: 12px; }
+    .toc { margin-bottom: 24px; }
+    .toc a { color: #2f54eb; text-decoration: none; margin-right: 18px; }
+    .toc a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="ant-card ant-card-bordered">
+    <div class="ant-card-head">
+      <div class="ant-card-head-title">
+        <h1>🖤 How to Use <code>black</code> for Python Formatting</h1>
+      </div>
+    </div>
+    <div class="ant-card-body">
+      <div class="toc">
+        <b>Table of Contents:</b>
+        <a href="#basic">Basic Usage</a>
+        <a href="#check">Check Formatting</a>
+        <a href="#example">Before & After</a>
+        <a href="#precommit">Pre-commit</a>
+        <a href="#vscode">VS Code Integration</a>
+        <a href="index.html">Tutorial Index</a>
+      </div>
+      <div class="ant-alert ant-alert-info">
+        <b>Black</b> is an opinionated Python code formatter. It reformats your code to follow a consistent style, making collaboration and code review easier.
+      </div>
+      <div class="example-section" id="basic">
+        <h2>💡 Basic Usage</h2>
+        <div class="cmd-block"><code>$ pip install black</code></div>
+        <div class="cmd-block"><code>$ black your_file.py</code></div>
+        <div class="cmd-block"><code>$ black .</code> <span style="color:#888;"># Format all files in the current directory</span></div>
+      </div>
+      <div class="example-section" id="check">
+        <h2>🔍 Check Formatting Without Changing Files</h2>
+        <div class="cmd-block"><code>$ black --check .</code></div>
+        <div class="ant-alert ant-alert-success">
+          <b>Tip:</b> <code>black --check .</code> returns a nonzero exit code if any files would be reformatted. Useful for CI!
+        </div>
+        <div class="cmd-block"><code>$ black --diff your_file.py</code></div>
+        <div class="cmd-block"><code>$ black --diff .</code></div>
+        <div class="ant-alert ant-alert-info">
+          <b>Note:</b> <code>black --check</code> only tells you if files would be reformatted, but does not show a diff.<br>
+          Use <code>--diff</code> to see what would change.
+        </div>
+      </div>
+      <div class="example-section" id="example">
+        <h2>📝 Example: Before and After</h2>
+        <b>Before:</b>
+        <pre>
+def foo(   x,y): print(  "Hello"  )
+        </pre>
+        <b>After running <code>black</code>:</b>
+        <pre>
+def foo(x, y):
+    print("Hello")
+        </pre>
+      </div>
+      <div class="example-section" id="precommit">
+        <h2>🤖 Automate with Pre-commit</h2>
+        <pre class="cmd-block"><code>
+-   repo: https://github.com/psf/black
+    rev: 24.3.0
+    hooks:
+      - id: black
+        language_version: python3
+        args: [--check]
+        </code></pre>
+        <div class="cmd-block"><code>$ pre-commit install</code></div>
+        <div class="cmd-block"><code>$ pre-commit run --all-files</code></div>
+      </div>
+      <div class="example-section" id="vscode">
+        <h2>🖤 VS Code Integration</h2>
+        <ul>
+          <li>Install the official <b>Python</b> extension for VS Code.</li>
+          <li>In your <code>settings.json</code>, set:</li>
+        </ul>
+        <pre>{
+  "python.formatting.provider": "black",
+  "editor.formatOnSave": true
+}</pre>
+        <ul>
+          <li>Now, every time you save a Python file, <code>black</code> will automatically format it.</li>
+          <li>You can also run <kbd>Format Document</kbd> (<kbd>Shift+Alt+F</kbd>) manually.</li>
+        </ul>
+      </div>
+      <div class="ant-alert ant-alert-info">
+        <b>Tip:</b> <code>black</code> is opinionated and will overwrite your formatting to match its style. Use it to keep your codebase consistent and avoid style debates.
+      </div>
+      <div class="backlinks">
+        <a href="index.html">&larr; Back to Tutorial Index</a>
+        <a href="imports.html">Import Order &amp; isort</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
