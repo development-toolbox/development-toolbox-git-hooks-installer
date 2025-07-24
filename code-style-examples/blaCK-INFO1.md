@@ -16,4 +16,4 @@
 > <code>black --check</code> only tells you if files would be reformatted, but does not show a diff.
 > To see what would change, use <code>black --diff your_file.py</code> or <code>black --diff .</code>.
 
----
+---git stat

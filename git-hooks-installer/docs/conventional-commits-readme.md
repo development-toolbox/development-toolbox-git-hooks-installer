@@ -1,4 +1,9 @@
 # Conventional Commits Guide
+# todo:
+# Fix this to actually have the right conventional commit styling!
+# tofix perhaps scan my commit folder and edit this file to match and be more speciffic and have better examples
+# update this file with comment done: and what you did!!
+
 
 This project uses the **Conventional Commits** standard to ensure clarity, consistency, and better automation in version control. The goal is to create a structured commit history that improves collaboration and makes the project easier to maintain.
 
@@ -72,7 +77,7 @@ A commit message should follow this structure:
 To enforce this standard, you can use tools like `commitlint` and `husky` for automated validation.
 
 ## Read more on Conventional commits
-[Conventional Commits][conventional-commits-main-site] 
+[Conventional Commits][conventional-commits-main-site]
 
 [The power of conventional commits][the-powewr-of-conv-commits]
 
@@ -84,4 +89,3 @@ To enforce this standard, you can use tools like `commitlint` and `husky` for au
 [cheat-cheat]: https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13
 [conventional-commits-main-site]: https://www.conventionalcommits.org/
 [the-powewr-of-conv-commits]: https://julien.ponge.org/blog/the-power-of-conventional-commits/
- 
