@@ -1,0 +1,57 @@
+# Dockerfile for testing git-hooks-installer
+FROM ubuntu:22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV GIT_AUTO_PUSH=0
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update && apt-get install -y \
+    python3.12 \
+    python3.12-venv \
+    python3.12-dev \
+    python3-pip \
+    git \
+    make \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up git configuration for testing
+RUN git config --global user.email "test@example.com" && \
+    git config --global user.name "Test User" && \
+    git config --global init.defaultBranch main
+
+# Create working directory
+WORKDIR /app
+
+# Copy the git-hooks-installer source
+COPY git-hooks-installer/ /app/git-hooks-installer/
+
+# Create a test repository
+RUN mkdir -p /test-repo && \
+    cd /test-repo && \
+    git init && \
+    echo "# Test Repository" > README.md && \
+    git add README.md && \
+    git commit -m "Initial commit"
+
+# Create virtual environment and install dependencies
+RUN python3.12 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip && \
+    if [ -f /app/git-hooks-installer/requirements.txt ]; then \
+        /venv/bin/pip install -r /app/git-hooks-installer/requirements.txt; \
+    fi
+
+# Add test script
+COPY tests/docker/test-installer.sh /app/test-installer.sh
+RUN chmod +x /app/test-installer.sh
+
+# Set PATH to use virtual environment
+ENV PATH="/venv/bin:$PATH"
+
+# Default command runs the test
+CMD ["/app/test-installer.sh"]
