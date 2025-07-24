@@ -7,6 +7,7 @@ Each commit links to its detailed log.
 
 | Commit Hash | Date & Time       | Author       | Message           |
 |-------------|------------------|--------------|-------------------|
+| [87d217dc](./87d217dc.md) | 2025-07-24 12:50 | Johan Sörell | docs(todo): added the commit message that includes the todolist for cide-style-tutorial |
 | [cbe01179](./cbe01179.md) | 2025-07-24 12:46 | Johan Sörell | # ✨ chore(docs): Build Stylish Code Style Tutorial UI & Plan for Dockerized Deployment |
 | [f98ccf87](./f98ccf87.md) | 2025-07-24 11:24 | Johan Sörell | # ✨ chore(githooks): Refactor for Long Lines, Visual Indent, and Style Consistency |
 | [1088b429](./1088b429.md) | 2025-07-23 23:18 | Johan Sörell | # 🚀 chore(githooks): Refactor, Whitespace Cleanup & Add Commit Utility |
