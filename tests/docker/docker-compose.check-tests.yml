@@ -1,0 +1,17 @@
+services:
+  check-functionality-tests:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.user-story-tests
+    volumes:
+      - ../..:/app
+      - ../../tests/results:/app/tests/results
+    command: >
+      bash -c "
+        cd /app &&
+        mkdir -p tests/results/check-functionality &&
+        echo '🧪 Running --check functionality tests...' | tee tests/results/check-functionality/test.log &&
+        tests/test-check-functionality.sh 2>&1 | tee -a tests/results/check-functionality/test.log
+      "
+    environment:
+      - MSYS_NO_PATHCONV=1

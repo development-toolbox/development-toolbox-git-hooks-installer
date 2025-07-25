@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Style: Long Lines</title>
+  <style>
+    pre { background: #f8f8f8; padding: 1em; border-radius: 5px; }
+    .bad { color: #b71c1c; }
+    .good { color: #1b5e20; }
+  </style>
+</head>
+<body>
+  <h1>Python Style: Long Lines</h1>
+  <p>PEP8 recommends lines be limited to 79 or 88/100 characters. Here’s how to fix long lines:</p>
+  <h2>❌ Bad Example</h2>
+  <pre class="bad">
+logger.info("This is a very long log message that goes way beyond the recommended line length and should be split.")
+  </pre>
+  <h2>✅ Good Example</h2>
+  <pre class="good">
+logger.info(
+    "This is a very long log message that goes way beyond the recommended "
+    "line length and should be split."
+)
+  </pre>
+  <h2>With Function Calls</h2>
+  <pre class="good">
+result = some_function(
+    arg1, arg2, arg3,
+    arg4, arg5
+)
+  </pre>
+</body>
+</html>

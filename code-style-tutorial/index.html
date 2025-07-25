@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Code Style & Linting Tutorial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css">
+  <style>
+    body { background: #f5f5f5; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    .site-layout { min-height: 100vh; background: #f5f5f5; display: flex; flex-direction: column; }
+    .header {
+      background: #222;
+      color: #fff;
+      font-size: 1.7em;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      height: 64px;
+      box-shadow: 0 2px 8px #f0f1f2;
+      justify-content: flex-start;
+    }
+    .nav-menu {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+      margin: 0 0 0 40px;
+      padding: 0;
+    }
+    .nav-menu li a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.05em;
+      font-weight: 500;
+      padding: 8px 0;
+      border-bottom: 2px solid transparent;
+      transition: border 0.2s;
+    }
+    .nav-menu li a:hover, .nav-menu li.active a {
+      border-bottom: 2px solid #1890ff;
+      color: #69c0ff;
+    }
+    .main-content {
+      flex: 1;
+      padding: 40px 24px 24px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .ant-card { margin-bottom: 32px; }
+    .section-title { font-size: 1.4em; color: #2f54eb; margin-bottom: 16px; }
+    .card-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+    .card-link {
+      display: block;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px #f0f1f2;
+      padding: 24px 20px 20px 20px;
+      min-width: 260px;
+      max-width: 340px;
+      flex: 1 1 260px;
+      text-decoration: none;
+      color: #222;
+      transition: box-shadow 0.2s, transform 0.2s;
+      border-left: 6px solid #e6e6e6;
+      position: relative;
+    }
+    .card-link:hover {
+      box-shadow: 0 4px 16px #d6e4ff;
+      transform: translateY(-2px) scale(1.02);
+      border-left: 6px solid #1890ff;
+      color: #1890ff;
+    }
+    .card-link .ant-tag { margin-bottom: 8px; }
+    .card-title { font-size: 1.15em; font-weight: bold; margin-bottom: 6px; }
+    .card-desc { color: #888; font-size: 0.98em; }
+    .footer {
+      background: #222;
+      color: #fff;
+      text-align: center;
+      padding: 18px 0 10px 0;
+      font-size: 1em;
+      letter-spacing: 0.5px;
+      margin-top: 32px;
+    }
+    @media (max-width: 900px) {
+      .main-content { padding: 24px 4px; }
+      .card-grid { flex-direction: column; gap: 12px; }
+      .card-link { min-width: 0; max-width: 100%; }
+      .header { font-size: 1.1em; padding: 0 10px; }
+      .nav-menu { margin-left: 10px; gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-layout">
+    <header class="header">
+      <span style="font-weight:bold;letter-spacing:1px;">🐍 Python Code Style & Linting Tutorial</span>
+      <nav>
+        <ul class="nav-menu">
+          <li class="active"><a href="index.html">Home</a></li>
+          <li><a href="#linting">Linting Topics</a></li>
+          <li><a href="#black">Black Formatting</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="main-content">
+      <div class="ant-card ant-card-bordered">
+        <div class="ant-card-head">
+          <div class="ant-card-head-title">
+            <span style="font-size:1.2em;font-weight:bold;">Welcome!</span>
+          </div>
+        </div>
+        <div class="ant-card-body">
+          <p>
+            This site is a practical guide to resolving common Python code issues flagged by <b>flake8</b>, <b>pylint</b>, <b>black</b>, and other tools.<br>
+            Each section includes real-world examples, explanations, and best practices.
+          </p>
+        </div>
+      </div>
+      <a id="linting"></a>
+      <div class="section-title">General Linting & Style Topics</div>
+      <div class="card-grid">
+        <a class="card-link" href="long-lines.html">
+          <span class="ant-tag ant-tag-warning">E501</span>
+          <div class="card-title">Long Lines</div>
+          <div class="card-desc">How to split long lines and keep code readable</div>
+        </a>
+        <a class="card-link" href="indentation.html">
+          <span class="ant-tag ant-tag-warning">E128/E127</span>
+          <div class="card-title">Indentation & Visual Indent</div>
+          <div class="card-desc">Fixing continuation line and alignment issues</div>
+        </a>
+        <a class="card-link" href="trailing-whitespace.html">
+          <span class="ant-tag ant-tag-error">W291/W293</span>
+          <div class="card-title">Trailing Whitespace & Blank Lines</div>
+          <div class="card-desc">How to spot and remove invisible whitespace</div>
+        </a>
+        <a class="card-link" href="imports.html">
+          <span class="ant-tag ant-tag-success">E402/F401</span>
+          <div class="card-title">Import Order & Unused Imports</div>
+          <div class="card-desc">Organizing and cleaning up imports</div>
+        </a>
+        <a class="card-link" href="naming.html">
+          <span class="ant-tag ant-tag-cyan">N802/N803</span>
+          <div class="card-title">Naming Conventions</div>
+          <div class="card-desc">Class, function, and variable naming best practices</div>
+        </a>
+        <a class="card-link" href="complexity.html">
+          <span class="ant-tag ant-tag-magenta">C901</span>
+          <div class="card-title">Code Complexity</div>
+          <div class="card-desc">How to refactor complex functions and reduce cyclomatic complexity</div>
+        </a>
+        <a class="card-link" href="docstrings.html">
+          <span class="ant-tag ant-tag-blue">D100/D101</span>
+          <div class="card-title">Docstrings & Documentation</div>
+          <div class="card-desc">Writing clear docstrings for modules, classes, and functions</div>
+        </a>
+        <a class="card-link" href="typing.html">
+          <span class="ant-tag ant-tag-purple">ANN201</span>
+          <div class="card-title">Type Annotations</div>
+          <div class="card-desc">Adding and checking type hints for better code safety</div>
+        </a>
+        <a class="card-link" href="exceptions.html">
+          <span class="ant-tag ant-tag-volcano">E722/W0702</span>
+          <div class="card-title">Exception Handling</div>
+          <div class="card-desc">Catching exceptions properly and avoiding bare excepts</div>
+        </a>
+        <a class="card-link" href="misc.html">
+          <span class="ant-tag ant-tag-geekblue">Other</span>
+          <div class="card-title">Miscellaneous Issues</div>
+          <div class="card-desc">Other common linter and style issues</div>
+        </a>
+      </div>
+      <a id="black"></a>
+      <div class="section-title" style="margin-top:40px;">Black Formatting</div>
+      <div class="card-grid">
+        <a class="card-link" href="black/usage.html">
+          <span class="ant-tag ant-tag-black" style="background:#222;color:#fff;">Black</span>
+          <div class="card-title">How to Use Black</div>
+          <div class="card-desc">Automatic code formatting and integration tips</div>
+        </a>
+        <a class="card-link" href="black/vscode.html">
+          <span class="ant-tag ant-tag-black" style="background:#222;color:#fff;">Black</span>
+          <div class="card-title">VS Code Integration</div>
+          <div class="card-desc">Format on save and manual formatting in VS Code</div>
+        </a>
+        <a class="card-link" href="black/pre-commit.html">
+          <span class="ant-tag ant-tag-black" style="background:#222;color:#fff;">Black</span>
+          <div class="card-title">Pre-commit Hook</div>
+          <div class="card-desc">Automate formatting before every commit</div>
+        </a>
+        <a class="card-link" href="black/ci.html">
+          <span class="ant-tag ant-tag-black" style="background:#222;color:#fff;">Black</span>
+          <div class="card-title">CI Integration</div>
+          <div class="card-desc">Use Black in GitHub Actions or other CI</div>
+        </a>
+      </div>
+      <a id="about"></a>
+      <div class="ant-card ant-card-bordered" style="margin-top:40px;">
+        <div class="ant-card-head">
+          <div class="ant-card-head-title">About This Tutorial</div>
+        </div>
+        <div class="ant-card-body">
+          <p>
+            This site is designed for Python developers who want to write clean, maintainable, and consistent code.<br>
+            Explore each topic using the menu above or the cards below. All pages have consistent navigation and design.
+          </p>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      &copy; 2024 Python Code Style Tutorial &mdash; Built with Ant Design v5 |
+      <a href="https://github.com/pycqa/isort" style="color:#69c0ff;">isort</a> |
+      <a href="https://github.com/psf/black" style="color:#69c0ff;">black</a>
+    </footer>
+  </div>
+</body>
+</html>

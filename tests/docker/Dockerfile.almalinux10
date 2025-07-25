@@ -1,0 +1,22 @@
+FROM almalinux:10
+
+RUN dnf install -y python3.12 python3.12-devel git-core-2.47.1 curl gcc make && \
+    dnf clean all
+
+RUN ln -sf python3.12 /usr/bin/python3
+
+# Create and use a virtual environment instead of modifying system packages
+RUN python3.12 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install pip in the virtual environment
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python
+
+# Use absolute path within the context
+COPY /tests/requirements.txt /requirements.txt
+RUN pip install --upgrade pip && pip install -r /requirements.txt
+
+WORKDIR /app
+COPY . /app
+
+CMD ["bash", "/app/tests/run_all.sh"]

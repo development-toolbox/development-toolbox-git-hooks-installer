@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>isort: Usage Patterns & CLI Options</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css">
+  <style>
+    body { background: #f0f2f5; padding: 32px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .ant-card { max-width: 700px; margin: 0 auto 32px auto; }
+    .cmd-block { background: #222; color: #fff; padding: 12px 16px; border-radius: 6px; font-size: 1em; margin: 8px 0; }
+    .cmd-block code { color: #bae7ff; }
+    .backlinks { margin-top: 32px; }
+    .backlinks a { margin-right: 18px; color: #2f54eb; text-decoration: none; font-weight: 500; }
+    .backlinks a:hover { text-decoration: underline; }
+    ul { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="ant-card ant-card-bordered">
+    <div class="ant-card-head">
+      <div class="ant-card-head-title">
+        <h1>isort: Usage Patterns & CLI Options</h1>
+      </div>
+    </div>
+    <div class="ant-card-body">
+      <ul>
+        <li>Sort a single file: <div class="cmd-block"><code>$ isort myfile.py</code></div></li>
+        <li>Sort all Python files in a directory: <div class="cmd-block"><code>$ isort .</code></div></li>
+        <li>Check for issues without changing files: <div class="cmd-block"><code>$ isort . --check --diff</code></div></li>
+        <li>Use a specific profile (e.g., black): <div class="cmd-block"><code>$ isort . --profile=black</code></div></li>
+      </ul>
+      <div class="backlinks">
+        <a href="../../imports.html">&larr; Back to Imports Tutorial</a>
+        <a href="install.html">Install isort</a>
+        <a href="pre-commit.html">Pre-commit Hook Example</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

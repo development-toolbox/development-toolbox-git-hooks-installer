@@ -1,0 +1,162 @@
+name: Update Git Timeline and Documentation
+
+on:
+  # Run on pull requests
+  pull_request:
+    types: [ opened, synchronize, reopened, closed ]
+
+  # Run on direct pushes to main branches
+  push:
+    branches:
+    - main
+    - master
+    - develop
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+
+    # Don't run on PRs from forks (they can't push anyway)
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        # Get full history for accurate timeline
+        fetch-depth: 0
+        # Use PAT or GitHub App token if available for pushing
+        token: ${{ secrets.GITHUB_TOKEN }}
+        # For PRs, checkout the PR branch
+        ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        fi
+
+    - name: Configure Git
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+
+    - name: Debug Git State
+      run: |
+        echo "=== Git Status ==="
+        git status
+        echo "=== Git Log (last 5) ==="
+        git log --oneline -5
+        echo "=== All branches ==="
+        git branch -a
+        echo "=== Current HEAD ==="
+        git rev-parse HEAD
+        echo "=== Short HEAD ==="
+        git rev-parse --short HEAD
+
+    - name: Generate git timeline
+      run: |
+        if [ -f scripts/post-commit/generate_git_timeline.py ]; then
+          echo "Generating git timeline..."
+          # Set branch name based on event type
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            export BRANCH_NAME="${{ github.head_ref }}"
+          else
+            # For push events, extract branch name from ref
+            export BRANCH_NAME="${{ github.ref_name }}"
+          fi
+          echo "BRANCH_NAME set to: $BRANCH_NAME"
+          python scripts/post-commit/generate_git_timeline.py
+        else
+          echo "Git timeline generator not found, skipping..."
+        fi
+
+    - name: Update README
+      run: |
+        if [ -f scripts/post-commit/update-readme.sh ]; then
+          echo "Updating README..."
+          # Set branch name based on event type
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            export BRANCH_NAME="${{ github.head_ref }}"
+          else
+            export BRANCH_NAME="${{ github.ref_name }}"
+          fi
+          echo "BRANCH_NAME set to: $BRANCH_NAME"
+          
+          # Set REPO_ROOT to help the script
+          export REPO_ROOT="${{ github.workspace }}"
+          echo "REPO_ROOT set to: $REPO_ROOT"
+          
+          # Debug: Show more of the script
+          echo "=== Debug: Looking for commit reference ==="
+          grep -n "27f36953" scripts/post-commit/update-readme.sh || echo "Commit ref not hardcoded"
+          
+          echo "=== Debug: Show lines 50-70 of script ==="
+          sed -n '50,70p' scripts/post-commit/update-readme.sh
+          
+          bash scripts/post-commit/update-readme.sh
+        else
+          echo "README updater not found, skipping..."
+        fi
+
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+          echo "No changes detected"
+        fi
+
+    - name: Commit and push changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+
+        # Add all changes
+        git add -A
+
+        # Create commit message
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          COMMIT_MSG="chore: Update git timeline and docs for PR #${{ github.event.pull_request.number }} [skip ci]"
+        else
+          COMMIT_MSG="chore: Update git timeline and documentation [skip ci]"
+        fi
+
+        git commit -m "$COMMIT_MSG"
+
+        # Push changes
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          # For PRs, push to the PR branch
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+        else
+          # For direct pushes, push to the current branch
+          git push
+        fi
+
+    - name: Comment on PR
+      if: github.event_name == 'pull_request' && steps.check_changes.outputs.changes == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '🤖 Git timeline and documentation have been automatically updated for this PR.'
+          })

@@ -1,0 +1,13 @@
+services:
+  installer-fix-test:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.installer-fix-test
+    container_name: githooks-installer-fix-test
+    environment:
+      - OS_NAME=ubuntu-fix-test
+      - TEST_TYPE=${TEST_TYPE:-fixes}
+    volumes:
+      - ../../tests/installer-results:/app/tests/installer-results
+      - ../../git-hooks-installer:/app/git-hooks-installer:ro
+    command: /app/test-installer-fixes.sh

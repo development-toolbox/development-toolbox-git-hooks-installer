@@ -1,0 +1,48 @@
+# Dockerfile for validation logic testing
+FROM ubuntu:22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV GIT_AUTO_PUSH=0
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update && apt-get install -y \
+    python3.12 \
+    python3.12-venv \
+    python3.12-dev \
+    python3-pip \
+    git \
+    make \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up git configuration for testing
+RUN git config --global user.email "test@example.com" && \
+    git config --global user.name "Test User" && \
+    git config --global init.defaultBranch main
+
+# Create working directory
+WORKDIR /app
+
+# Copy the git-hooks-installer source and tests
+COPY git-hooks-installer/ /app/git-hooks-installer/
+COPY tests/ /app/tests/
+
+# Create virtual environment and install test dependencies
+RUN python3.12 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip && \
+    /venv/bin/pip install pytest unittest-xml-reporting
+
+# Add validation test script
+COPY tests/docker/test-validation.sh /app/test-validation.sh
+RUN chmod +x /app/test-validation.sh
+
+# Set PATH to use virtual environment
+ENV PATH="/venv/bin:$PATH"
+
+# Default command runs the validation tests
+CMD ["/app/test-validation.sh"]

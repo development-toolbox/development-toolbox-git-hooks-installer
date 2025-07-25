@@ -1,185 +1,182 @@
-# git-hooks-installer: Commit Log System
+# Git Hooks Installer - Security-First Implementation
 
-This project uses an **automated commit logging system** that **follows** the **Conventional Commits** standard. This ensures all changes are clearly recorded, easy to understand, and simple to track.  
+This is a **secure git hooks installer** that automates commit logging and documentation while maintaining comprehensive security guarantees. It implements User Story-driven requirements and requires manual review via pull requests.
 
 ---
 
 ## ✅ Overview
 
-The commit log system automatically generates detailed commit logs after every commit, ensuring that all changes can be traced and reviewed with clarity. It uses **Conventional Commits** to standardize commit messages, making the history easier to navigate and automate.
+The secure git hooks installer provides automated commit logging with safety-first approach:
 
-### 📖 What Are Conventional Commits?
+- **Security-first**: Comprehensive validation and secure subprocess operations
+- **PR-only workflow**: Never auto-merges, always requires manual review  
+- **File tracking**: Only commits installer-created files, never user secrets
+- **Repository validation**: Pre-flight checks ensure repository is ready
+- **User Story driven**: Implements business requirements (US-001 through US-005)
 
-**Conventional Commits** is a standard that provides a simple way to write clear commit messages. It helps keep projects organized and makes it easier to automate things like changelogs, version updates, and release notes.
+### 🔒 Security Guarantees
 
-👉 **Learn more at:** [https://www.conventionalcommits.org](https://www.conventionalcommits.org)
+- ✅ Never commits user files or secrets
+- ✅ Always requires PR review (no auto-merge)
+- ✅ Validates repository state before operations
+- ✅ Tracks only installer-created files
+- ✅ Fails safely with clear error messages
 
 ---
 
-## Commit Log Structure
+## 🏗️ Architecture
 
-After each commit, a detailed commit log is generated in the `docs/commit-logs` directory, sorted by branch. Each log file is named using the commit hash for traceability.
+### Core Components
 
-### Example Structure
-```plaintext
-docs/
-└── commit-logs
-    ├── main
-    │   ├── 305f3093.md
-    │   ├── 8d917eb1.md
-    │   └── README.md
-    └── commit-log-system-readme.md
+1. **Main Installer** (`git-hooks-installer.py`)
+   - Security-first implementation with comprehensive safety checks
+   - Creates timestamped feature branches: `feat/safe-githooks-installation-<timestamp>`
+   - Implements User Story-driven requirements (US-001 through US-005)
+
+2. **Security Package** (`security/`)
+   - `secure_git_wrapper.py`: Secure subprocess wrapper with command whitelisting
+   - `file_tracker.py`: Tracks installer-created files for safe commits
+   - `repository_validator.py`: Pre-flight safety validations
+   - `__init__.py`: Clean package imports
+
+3. **Utilities Package** (`utils/`)
+   - `commit_file.py`: Commit processing utilities
+   - `debug_commit_log.py`: Debug and logging helpers
+   - `manage_gitignore.py`: Gitignore management utilities
+
+4. **Archived Components** (`archived/`)
+   - Legacy installer versions for reference
+   - **Do not use**: These are kept for historical reference only
+
+---
+
+## 🚀 Installation
+
+### Quick Start
+```bash
+# Install git hooks with security validation and PR workflow
+python git-hooks-installer.py /path/to/target/repo
+
+# Or with source directory specified
+python git-hooks-installer.py --source /path/to/source /path/to/target/repo
+```
+
+### For Developers
+```bash
+# Manual setup for developers (no PR required)
+python developer-setup/setup_githooks.py
 ```
 
 ---
 
-## ✅ Conventional Commits Guide
+## 🔧 Package Structure
 
-This project follows the **Conventional Commits** standard for clarity and automation in version control.
+The installer follows Python packaging standards:
+
+```python
+# Package-level imports (recommended)
+from security import SecureGitWrapper, SafeFileTracker, RepositoryValidator
+
+# Individual module imports
+from security.secure_git_wrapper import SecureGitWrapper, SecureGitError
+from security.file_tracker import SafeFileTracker
+from security.repository_validator import RepositoryValidator
+```
+
+---
+
+## 🧪 Testing
+
+### Docker-based Testing
+```bash
+# Run comprehensive security tests across multiple OS
+./run_docker-tests.sh
+
+# Run User Story validation tests
+docker-compose -f tests/docker/docker-compose.user-story-tests.yml up --build --abort-on-container-exit
+```
+
+### User Story Tests
+The installer validates against 5 key User Stories:
+- **US-001**: Safe installation for developers with secrets
+- **US-002**: Team lead code quality control via PR workflow
+- **US-003**: Developer work-in-progress protection  
+- **US-004**: Cross-platform developer setup
+- **US-005**: Repository administrator branch protection
+
+---
+
+## 🛡️ Security Features
+
+### SecureGitWrapper
+- **Command whitelisting**: Only approved Git commands allowed
+- **Argument validation**: Each command has whitelisted allowed arguments
+- **Path sanitization**: Prevents path traversal attacks
+- **Branch name validation**: Prevents injection via malicious branch names
+- **Timeout protection**: 30-second timeout prevents hanging operations
+
+### File Tracking System
+- **Explicit tracking**: Only installer-created files are committed
+- **Staging validation**: Ensures only tracked files are staged
+- **Manifest generation**: Complete audit trail for all operations
+- **Safety checks**: Pre-commit validation of file contents
+
+### Repository Validation
+- **Working tree checks**: Ensures clean repository state
+- **Branch validation**: Prevents conflicts with existing branches
+- **Remote validation**: Checks for proper remote configuration
+- **Pre-flight safety**: Comprehensive validation before any operations
+
+---
+
+## 📋 Workflow
+
+1. **Pre-flight Checks**: Validates repository state and requirements
+2. **Feature Branch**: Creates timestamped branch for installation
+3. **Safe Installation**: Installs components with comprehensive tracking
+4. **Commit & Push**: Commits only tracked files with detailed messages
+5. **PR Generation**: Provides instructions for manual review process
+
+---
+
+## 🔗 Integration
+
+### CI/CD Support
+- Automatically detects GitHub Actions / GitLab CI
+- Installs appropriate workflow files
+- Maintains compatibility across platforms
+
+### Cross-Platform
+- **Linux/macOS**: Shell wrapper scripts (`setup-githooks.sh`)
+- **Windows**: PowerShell scripts (`setup-githooks.ps1`)
+- **Docker**: Multi-OS testing (Ubuntu, AlmaLinux 9/10)
+
+---
+
+## 📖 Documentation
+
+- **Security Implementation**: See `SECURITY-ENHANCEMENTS.md` for complete security details
+- **Framework Guide**: `docs/SECURITY-IMPLEMENTATION-FRAMEWORK.md` for reusable patterns
+- **Project Memory**: `../CLAUDE.md` for development context
+
+---
+
+## 🤝 Contributing
+
+1. Follow **Conventional Commits** standard for all commits
+2. Use the safe installer for any hook-related changes  
+3. All changes require PR review (no direct commits to main)
+4. Run tests before submitting: `./run_docker-tests.sh`
 
 ### Commit Message Format
-```plaintext
-<type>(optional scope): <description>
-
-[optional body]
-
-[optional footer(s)]
 ```
+<type>(scope): <description>
 
-### Commit Types with Examples
-- **`feat(scope)`** – Adding a new feature.  
-   *Example:* `feat(upload): add bulk image upload feature with drag-and-drop support`
-
-- **`fix(scope)`** – Fixing a bug.  
-   *Example:* `fix(storage): correct file reference bug in image processing`
-
-- **`docs(scope)`** – Updating documentation.  
-   *Example:* `docs(readme): add example usage for commit process`
-
-- **`refactor(scope)`** – Code changes without functional impact.  
-   *Example:* `refactor(core): simplify data validation logic`
-
-- **`style(scope)`** – Code style changes (e.g., formatting).  
-   *Example:* `style(css): standardize indentation in style.css`
-
-- **`chore(scope)`** – Maintenance tasks like dependency updates.  
-   *Example:* `chore(deps): upgrade pytest to version 7.2.0`
-
-- **`test(scope)`** – Adding or updating tests.  
-   *Example:* `test(image-processing): add unit tests for resize feature`
-
----
-
-## ✅ Usage
-
-This commit log system automates the process of recording all commit activity. Below is a **step-by-step** guide for making a professional commit using **Conventional Commits**.
-
-### Example Workflow:
-1. **Stage Your Changes**  
-   Add your modified files to the staging area:
-   ```bash
-   git add <file-name>
-   ```
-
-2. **Check the Changes (Optional)**  
-   Verify the staged files before committing:
-   ```bash
-   git status
-   git diff --staged
-   ```
-
-3. **Commit the Changes (Using Conventional Commits)**  
-   Use a properly formatted commit message:
-   ```bash
-   git commit -m "feat(upload): add bulk image upload with drag-and-drop support"
-   ```
-
-4. **Verify the Commit Log (Optional)**  
-   Check the auto-generated commit log located under `docs/commit-logs`:
-   ```bash
-   ls docs/commit-logs/main
-   ```
-
-5. **Push the Changes**  
-   Push the commit to your remote repository:
-   ```bash
-   git push origin <branch> 
-   # or just do git push if you like 
-   ```
-
-### Example with Auto-Push Enabled (`GIT_AUTO_PUSH`)
-```bash
-GIT_AUTO_PUSH=true git commit -m "chore(hooks): enable auto-push for commit logging"
+Examples:
+feat(security): add path validation to SecureGitWrapper
+fix(installer): resolve branch creation issue
+docs(readme): update installation instructions
 ```
-
----
-
-## ✅ Parameters
-
-The commit log system uses the following parameter for additional customization:
-
-- **`GIT_AUTO_PUSH`** – Controls whether commit logs are automatically pushed after each commit.
-
-### Default Behavior:
-- If **`GIT_AUTO_PUSH`** is **not set**, it defaults to `false` (no auto-push).
-- To enable automatic pushing, set `GIT_AUTO_PUSH=true` before committing.
-
-### Example Usage:
-```bash
-# Enable auto-push for a single commit
-GIT_AUTO_PUSH=true git commit -m "chore(hooks): enable auto-push for commit logging"
-
-# Disable auto-push (default behavior)
-git commit -m "docs: update README with clearer parameter explanation"
-```
----
-
-## ✅ Installation
-
-Ensure you have the following dependencies installed:
-
-- `git`
-
-### Steps to Install:
-
-```bash
-# Clone the repository
-git clone https://github.com/development-toolbox/development-toolbox-core.git
-cd development-toolbox-core
-
-# Install the commit log system (automatically adds the post-commit hook)
-./scripts/install_post_commit_hook.sh
-```
-
----
-
-## ✅ Changed Files Explained
-
-The **Changed Files** section in the commit log uses standard Git status codes:
-
-- **R** – Renamed file
-- **096** – Similarity index (96% similarity with the original file)
-- **A** – Added file
-- **D** – Deleted file
-- **M** – Modified file
-
----
-
-## ✅ How the Commit Log System Works
-
-The commit log system is managed by a `post-commit` hook located in `.git/hooks/post-commit`. The process works as follows:
-
-1. **Marker File Check:** Prevents recursive execution using a marker file.
-2. **Commit Information Collection:** Gathers commit hash, message, author, date, and branch details.
-3. **Changed Files Detection:** Captures a list of modified files and their statuses using `git diff`.
-4. **Log Generation:** Writes a structured commit log to `docs/commit-logs`.
-5. **Automatic Push (Optional):** If the `GIT_AUTO_PUSH` variable is enabled, the log will be committed and pushed automatically.
-
----
-
-## ✅ Contributing
-
-Contributions are welcome! Please ensure all commit messages follow the **Conventional Commits** standard described above. For larger changes, consider opening a discussion issue first.
 
 ---
 
@@ -189,4 +186,4 @@ Contributions are welcome! Please ensure all commit messages follow the **Conven
 - **GitHub:** [J-SirL](https://github.com/J-SirL)  
 - **LinkedIn:** [Johan Sörell](https://se.linkedin.com/in/johansorell)  
 
-The original `git-hooks-installer` files used in this system are located in the [development-toolbox-core](https://github.com/development-toolbox/development-toolbox-core) repository.
+This secure git hooks installer is part of the [development-toolbox](https://github.com/development-toolbox/development-toolbox-git-hooks-installer) ecosystem.

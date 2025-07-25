@@ -11,77 +11,127 @@ This project uses the **Conventional Commits** standard to ensure clarity, consi
 A commit message should follow this structure:
 
 ```plaintext
-<type>(optional scope): <description>
+<type>(<scope>): <description>
 
-[optional body]
+[optional body with bullet points or paragraphs]
 
 [optional footer(s)]
 ```
 
-## Commit Types and Usage
+## Commit Types and Examples from This Project
 
-### ✅ `feat:` (Feature)
-- **Description:** Introduces a new feature.
-- **Example:** `feat: add bulk image upload option`
+### 🚀 `feat:` (Feature)
+- **Description:** Introduces a new feature or major functionality.
+- **Real Examples:**
+  - `feat(installer): add --check/-c option for installation status verification`
+  - `feat(testing): Add comprehensive Docker-based installer testing infrastructure`
+  - `feat(installer): major refactor - secure Python package structure, comprehensive testing, and simplified interface`
 
-### ✅ `fix:` (Bug Fix)
-- **Description:** Fixes a bug.
-- **Example:** `fix: correct image upload path error`
+### 🐛 `fix:` (Bug Fix)
+- **Description:** Fixes a bug or issue.
+- **Real Examples:**
+  - `fix(installer): correct path normalization for cross-platform compatibility`
+  - `fix(test): remove --source parameter from test scripts`
+  - `fix(cleanup): properly remove tracked files on installation failure`
 
-### ✅ `refactor:` (Code Refactoring)
-- **Description:** Code changes that do not affect functionality but improve structure or readability.
-- **Example:** `refactor: rename 'github-hooks' to 'git-hooks-installer'`
+### ♻️ `refactor:` (Code Refactoring)
+- **Description:** Code changes that improve structure without changing functionality.
+- **Real Examples:**
+  - `refactor(installer): rename SafeFileTracker to FileTracker`
+  - `refactor(structure): reorganize into proper Python package with security/ and utils/`
+  - `refactor(imports): update all import statements after package reorganization`
 
-### ✅ `chore:` (Maintenance Tasks)
+### 🔧 `chore:` (Maintenance Tasks)
 - **Description:** Changes related to build tools, dependencies, or project settings.
-- **Example:** `chore: update project dependencies`
+- **Real Examples:**
+  - `chore(cleanup): archive obsolete installer versions`
+  - `chore(deps): update developer-setup requirements.txt`
+  - `chore(git): add .treeignore for better directory visualization`
 
-### ✅ `docs:` (Documentation)
+### 📚 `docs:` (Documentation)
 - **Description:** Documentation changes only.
-- **Example:** `docs: add README section for CI setup`
+- **Real Examples:**
+  - `docs(security): add SECURITY-IMPLEMENTATION-FRAMEWORK.md`
+  - `docs(readme): update with new package structure and --check option`
+  - `docs(todo): document todo folder management system in CLAUDE.md`
 
-### ✅ `style:` (Code Style)
+### 🎨 `style:` (Code Style)
 - **Description:** Formatting and style updates without functional impact.
-- **Example:** `style: fix indentation issues in script`
+- **Real Examples:**
+  - `style(formatting): fix indentation in git-hooks-installer.py`
+  - `style(naming): update class names to follow Python conventions`
+  - `style(comments): remove unnecessary inline comments`
 
-### ✅ `test:` (Testing)
+### 🧪 `test:` (Testing)
 - **Description:** Adding or updating tests.
-- **Example:** `test: add tests for image resizing`
+- **Real Examples:**
+  - `test(options): add test-all-program-options.sh for comprehensive CLI testing`
+  - `test(docker): create separate compose files for different test suites`
+  - `test(user-stories): add USER-STORY-TEST-RESULTS.md documentation`
 
-### ✅ `perf:` (Performance Improvements)
+### ⚡ `perf:` (Performance Improvements)
 - **Description:** Performance-related improvements.
-- **Example:** `perf: optimize image compression speed`
+- **Real Examples:**
+  - `perf(installer): optimize file tracking with proper path normalization`
+  - `perf(git): batch git operations to reduce subprocess calls`
 
-### ✅ `ci:` (Continuous Integration)
+### 👷 `ci:` (Continuous Integration)
 - **Description:** CI/CD configurations and changes.
-- **Example:** `ci: update GitHub Actions to run tests`
+- **Real Examples:**
+  - `ci(docker): add Dockerfile.user-story-tests for isolated testing`
+  - `ci(compose): create docker-compose.options-tests.yml`
 
-### ✅ `build:` (Build System)
-- **Description:** Changes affecting the build system.
-- **Example:** `build: migrate from npm to yarn`
+### 🛡️ `security:` (Security Fixes)
+- **Description:** Security-related changes or fixes.
+- **Real Examples:**
+  - `security(subprocess): implement SecureGitWrapper with command validation`
+  - `security(validation): add RepositoryValidator for pre-flight checks`
+  - `security(installer): ensure only tracked files are committed`
 
-### ✅ `revert:` (Reverting Changes)
-- **Description:** Revert a previous commit.
-- **Example:** `revert: undo commit abc123`
+## Multi-line Commit Examples
 
-### ✅ `security:` (Security Fixes)
-- **Description:** Security patches.
-- **Example:** `security: fix XSS vulnerability in login form`
+### Example 1: Feature with Details
+```
+feat(installer): implement comprehensive status checking functionality
+
+- Add --check/-c flag for installation verification
+- Report status of hooks, scripts, documentation, and wrappers
+- Provide clear exit codes (0=complete, 1=incomplete)
+- Include detailed feedback on missing components
+```
+
+### Example 2: Major Refactor
+```
+refactor(structure): reorganize project into proper Python package
+
+## Changes
+- Create security/ package for secure operations
+- Create utils/ package for helper functions
+- Move obsolete files to archived/ directory
+- Add proper __init__.py files for all packages
+
+## Benefits
+- Better code organization
+- Cleaner import structure
+- Easier testing and maintenance
+```
+
+## Best Practices for This Project
+
+1. **Scope Usage**: Always include scope in parentheses (e.g., `feat(installer):`, `docs(readme):`)
+2. **Present Tense**: Use present tense ("add" not "added")
+3. **Lowercase**: Start descriptions with lowercase
+4. **No Period**: Don't end the subject line with a period
+5. **Body Format**: Use bullet points or markdown formatting in the body
+6. **Co-authorship**: Include co-author info when using AI assistance:
+   ```
+   Co-Authored-By: Claude <noreply@anthropic.com>
+   ```
 
 ## Enforcing Conventional Commits
-To enforce this standard, you can use tools like `commitlint` and `husky` for automated validation.
+This project's git hooks automatically validate commit messages and generate documentation. The post-commit hook creates logs tracking all commits.
 
-## Read more on Conventional commits
-[Conventional Commits][conventional-commits-main-site] 
-
-[The power of conventional commits][the-powewr-of-conv-commits]
-
-[git gist cheat][cheat-cheat]
-
-
-
-
-[cheat-cheat]: https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13
-[conventional-commits-main-site]: https://www.conventionalcommits.org/
-[the-powewr-of-conv-commits]: https://julien.ponge.org/blog/the-power-of-conventional-commits/
- 
+## References
+- [Conventional Commits Specification](https://www.conventionalcommits.org/)
+- [Angular Commit Guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-format)
+- [Gitmoji](https://gitmoji.dev/) - Emoji guide for commit messages

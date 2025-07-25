@@ -1,0 +1,29 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y \
+        python3.12 python3.12-venv python3.12-dev \
+        git \
+        curl build-essential \
+        && rm -rf /var/lib/apt/lists/*
+
+# Create and use a virtual environment instead of modifying system packages
+RUN python3.12 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install pip in the virtual environment
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python
+
+# Use absolute path within the context
+COPY /tests/requirements.txt /requirements.txt
+RUN pip install --upgrade pip && pip install -r /requirements.txt
+
+WORKDIR /app
+COPY . /app
+
+CMD ["bash", "/app/tests/run_all.sh"]
