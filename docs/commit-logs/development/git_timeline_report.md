@@ -1,6 +1,6 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-07-25 15:02:00
+> **Generated on:** 2025-07-25 18:10:03
 
 > **Branch:** `development`
 
@@ -8,11 +8,12 @@
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
 | bugfix/git-hooks-installer-switches-to-main | 76448ae | Johan SÃ¶rell |
-| development | 31cc9b1 | Johan SÃ¶rell |
+| development | 8a09244 | Johan SÃ¶rell |
 | fetures/update-docs | dbaea18 | Johan SÃ¶rell |
 | main | 5b5b53f | Johan SÃ¶rell |
 | origin | 5b5b53f | Johan SÃ¶rell |
 | origin/bugfix/git-hooks-installer-switches-to-main | 76448ae | Johan SÃ¶rell |
+| origin/development | bbe6fda | Johan SÃ¶rell |
 | origin/fetures/update-docs | dbaea18 | Johan SÃ¶rell |
 | origin/main | 5b5b53f | Johan SÃ¶rell |
 
@@ -25,6 +26,16 @@
 |------------|-------------|---------|
 
 ## 📁 Commit Log
+### ✅ Commit: [8a09244](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/8a09244)
+- **Date:** 2025-07-25 18:10:02 +0200
+- **Author:** Johan SÃ¶rell
+- **Message:** fix(validation): resolve critical Windows staging bug and false positive warnings
+
+### ✅ Commit: [bbe6fda](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/bbe6fda)
+- **Date:** 2025-07-25 15:01:59 +0200
+- **Author:** Johan SÃ¶rell
+- **Message:** Update commit timeline: 31cc9b1e1dcbfc324bf2bb9f2034d376d5e3bff7
+
 ### ✅ Commit: [31cc9b1](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/31cc9b1)
 - **Date:** 2025-07-25 15:01:59 +0200
 - **Author:** Johan SÃ¶rell
