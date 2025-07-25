@@ -1,0 +1,17 @@
+services:
+  options-tests:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.user-story-tests
+    volumes:
+      - ../..:/app
+      - ../../tests/results:/app/tests/results
+    command: >
+      bash -c "
+        cd /app &&
+        mkdir -p tests/results/options-tests &&
+        echo '🧪 Running comprehensive program options tests...' | tee tests/results/options-tests/test.log &&
+        tests/test-all-program-options.sh 2>&1 | tee -a tests/results/options-tests/test.log
+      "
+    environment:
+      - MSYS_NO_PATHCONV=1

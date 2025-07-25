@@ -1,0 +1,12 @@
+# .treeignore example
+__pycache__
+*.pyc
+.git
+node_modules
+.DS_Store
+.env
+*.log
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.vscode
