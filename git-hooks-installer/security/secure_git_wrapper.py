@@ -151,6 +151,8 @@ class SecureGitWrapper:
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding='utf-8',  # Force UTF-8 encoding
+                errors='replace',  # Replace invalid characters instead of failing
                 check=check,
                 timeout=self.timeout,
                 shell=False,  # NEVER use shell=True
@@ -190,7 +192,35 @@ class SecureGitWrapper:
     def add_file(self, file_path: str) -> None:
         """Add a file to staging area."""
         validated_path = self._validate_file_path(file_path)
-        self.run("add", str(validated_path))
+        # Ensure forward slashes for Git compatibility on Windows
+        git_path = str(validated_path).replace('\\', '/')
+        
+        # Check if file has changes before attempting to stage
+        status_result = self.run("status", "--porcelain", git_path, check=False)
+        file_has_changes = bool(status_result.stdout.strip())
+        
+        # Add the file
+        result = self.run("add", git_path)
+        
+        # Only verify staging if the file had changes
+        if file_has_changes:
+            # Verify the file was actually staged by checking if it appears in staging
+            check_result = self.run("diff", "--cached", "--name-only", check=False)
+            staged_files = [f.strip() for f in check_result.stdout.split('\n') if f.strip()]
+            
+            # Check if our file is in the staged files list
+            if git_path not in staged_files:
+                # More detailed error with debugging info
+                logger.error(f"STAGING DEBUG - Failed to stage: {file_path}")
+                logger.error(f"  - Original path: {file_path}")
+                logger.error(f"  - Validated path: {validated_path}")
+                logger.error(f"  - Git path: {git_path}")
+                logger.error(f"  - File exists: {(self.repo_path / git_path).exists()}")
+                logger.error(f"  - All staged files: {staged_files}")
+                raise SecureGitError(f"Failed to stage file: {file_path} (git_path: {git_path})")
+        else:
+            # File has no changes - this is expected behavior, not an error
+            logger.debug(f"File {file_path} has no changes, git add correctly did nothing")
     
     def commit(self, message: str) -> None:
         """Create a commit with message."""

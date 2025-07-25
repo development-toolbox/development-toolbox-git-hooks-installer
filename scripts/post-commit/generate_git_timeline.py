@@ -3,8 +3,13 @@
 import subprocess
 import os
 import sys
+import io
 from datetime import datetime
 from pathlib import Path
+
+# Set UTF-8 encoding for stdout to handle emojis on Windows
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 from githooks_utils import (
     assert_inside_repo,

@@ -24,3 +24,16 @@ services:
       - ../../tests/installer-results:/app/tests/installer-results
       - ../../git-hooks-installer:/app/git-hooks-installer:ro
     command: /app/test-installer.sh
+
+  validation-test-ubuntu:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.validation-test
+    container_name: githooks-validation-test-ubuntu
+    environment:
+      - OS_NAME=ubuntu
+      - TEST_TYPE=validation
+    volumes:
+      - ../../tests/validation-results:/app/tests/validation-results
+      - ../../git-hooks-installer:/app/git-hooks-installer:ro
+    command: /app/test-validation.sh

@@ -1,0 +1,26 @@
+{
+    "test_run_id": "2025-07-25-002-ubuntu-validation",
+    "date": "2025-07-25T15:32:30+00:00",
+    "os": "ubuntu",
+    "test_type": "validation",
+    "python_version": "Python 3.12.11",
+    "git_version": "git version 2.34.1",
+    "status": "failed",
+    "exit_code": 0,
+    "duration_seconds": 0,
+    "test_categories": {
+        "unit_tests": "FileTracker validation logic",
+        "integration_tests": "Full installer workflow validation",
+        "performance_tests": "Validation with many files"
+    },
+    "test_scenarios_covered": [
+        "Path separator handling (Windows/Unix)",
+        "Unicode/emoji filename support", 
+        "False positive detection and elimination",
+        "Unexpected file detection",
+        "Missing file warning handling",
+        "Full installer workflow validation",
+        "Manifest file inclusion validation",
+        "Performance with large file counts"
+    ]
+}

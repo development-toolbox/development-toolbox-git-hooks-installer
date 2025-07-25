@@ -3,6 +3,16 @@
 # Version: 0.5
 # Installed by: git-hooks-installer
 
+# Set UTF-8 encoding for Windows compatibility
+export PYTHONIOENCODING=utf-8
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+# For Git Bash on Windows, force UTF-8 output
+if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]] || [[ -n "$WINDIR" ]]; then
+    chcp.com 65001 > /dev/null 2>&1 || true
+fi
+
 set -e  # Exit script if any command fails
 
 # Prevent recursive execution using a marker file
@@ -91,6 +101,7 @@ if [ $? -ne 0 ]; then
   echo "ERROR: Failed to stage $LOG_FILE"
   exit 1
 fi
+
 echo "✅ Successfully staged: $LOG_FILE"
 
 # Update branch-specific README.md

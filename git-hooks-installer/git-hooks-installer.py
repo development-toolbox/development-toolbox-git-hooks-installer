@@ -139,8 +139,9 @@ class GitHooksInstaller:
 
         try:
             # Create scripts directory
-            scripts_dst.mkdir(parents=True, exist_ok=True)
-            self.file_tracker.track_directory_creation("scripts")
+            if not scripts_dst.exists():
+                scripts_dst.mkdir(parents=True, exist_ok=True)
+                self.file_tracker.track_directory_creation("scripts")
 
             # Copy all files with tracking
             for src_file in scripts_src.rglob("*"):
@@ -178,10 +179,15 @@ class GitHooksInstaller:
         logger.info("📚 Installing documentation...")
 
         try:
-            # Create docs directory
-            docs_dst.mkdir(parents=True, exist_ok=True)
-            self.file_tracker.track_directory_creation("docs")
-            self.file_tracker.track_directory_creation("docs/githooks")
+            # Create docs directories
+            docs_parent = self.target_repo / "docs"
+            if not docs_parent.exists():
+                docs_parent.mkdir(parents=True, exist_ok=True)
+                self.file_tracker.track_directory_creation("docs")
+            
+            if not docs_dst.exists():
+                docs_dst.mkdir(parents=True, exist_ok=True)
+                self.file_tracker.track_directory_creation("docs/githooks")
 
             # Copy documentation files
             for src_file in docs_src.rglob("*"):
@@ -220,19 +226,22 @@ class GitHooksInstaller:
 
         try:
             # Create developer-setup directory
-            setup_dst.mkdir(parents=True, exist_ok=True)
-            self.file_tracker.track_directory_creation("developer-setup")
+            if not setup_dst.exists():
+                setup_dst.mkdir(parents=True, exist_ok=True)
+                self.file_tracker.track_directory_creation("developer-setup")
 
             # Copy entire developer-setup structure
             for src_item in setup_src.iterdir():
                 if src_item.is_dir():
                     dst_dir = setup_dst / src_item.name
-                    if dst_dir.exists():
+                    dir_existed = dst_dir.exists()
+                    if dir_existed:
                         shutil.rmtree(dst_dir)
                     shutil.copytree(src_item, dst_dir)
 
-                    # Track directory and all files
-                    self.file_tracker.track_directory_creation(f"developer-setup/{src_item.name}")
+                    # Track directory only if it didn't exist before
+                    if not dir_existed:
+                        self.file_tracker.track_directory_creation(f"developer-setup/{src_item.name}")
                     for file_path in dst_dir.rglob("*"):
                         if file_path.is_file():
                             rel_path = file_path.relative_to(self.target_repo)
@@ -342,13 +351,13 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
 
             version_file = version_dir / ".githooks-version.json"
             version_data = {
-                "version": "safe-v1.0",
+                "version": "1.0.0",
                 "installed": datetime.now().isoformat(),
-                "installer": "safe-git-hooks-installer",
+                "installer": "git-hooks-installer",
                 "branch": self.branch_name,
                 "original_branch": self.original_branch,
-                "safety_validated": True,
-                "files_tracked": self.file_tracker.get_summary()
+                "repository_validated": True,
+                "installation_summary": self.file_tracker.get_summary()
             }
 
             import json
@@ -371,12 +380,22 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
         logger.info("💾 Committing tracked changes...")
 
         try:
-            # Add only tracked files
-            if not self.file_tracker.safe_add_tracked_files():
+            # Add only tracked files (without validation yet)
+            if not self.file_tracker.safe_add_tracked_files(skip_validation=True):
                 return False
 
             # Generate manifest
             manifest_path = self.file_tracker.save_manifest()
+            
+            # Add the manifest file to staging
+            manifest_rel_path = manifest_path.relative_to(self.target_repo)
+            self.git.add_file(str(manifest_rel_path).replace('\\', '/'))  # nosec B602 - Using SecureGitWrapper
+            logger.info(f"📄 Added manifest to staging: {manifest_rel_path}")
+
+            # NOW validate that everything is staged correctly (with debug info)
+            if not self.file_tracker.validate_staging_area(debug=True):
+                logger.error("❌ Final staging validation failed")
+                return False
 
             # Create detailed commit message
             commit_message = self.file_tracker.create_detailed_commit_message()
@@ -537,28 +556,78 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
 
                 if 'github.com' in remote_url:
                     pr_url = f"{remote_url}/compare/{self.original_branch}...{self.branch_name}"
-                    logger.info(f"🔗 Create GitHub PR: {pr_url}")
+                    logger.info("")
+                    logger.info("=" * 70)
+                    logger.info("🚨 ACTION REQUIRED: CREATE PULL REQUEST 🚨")
+                    logger.info("=" * 70)
+                    logger.info("")
+                    logger.info("👉 Click here to create PR:")
+                    logger.info(f"   {pr_url}")
+                    logger.info("")
+                    logger.info("=" * 70)
                 elif 'gitlab' in remote_url:
                     pr_url = f"{remote_url}/-/merge_requests/new?merge_request[source_branch]={self.branch_name}&merge_request[target_branch]={self.original_branch}"
-                    logger.info(f"🔗 Create GitLab MR: {pr_url}")
+                    logger.info("")
+                    logger.info("=" * 70)
+                    logger.info("🚨 ACTION REQUIRED: CREATE MERGE REQUEST 🚨")
+                    logger.info("=" * 70)
+                    logger.info("")
+                    logger.info("👉 Click here to create MR:")
+                    logger.info(f"   {pr_url}")
+                    logger.info("")
+                    logger.info("=" * 70)
 
         except Exception:
             pass  # Non-critical
 
         logger.info("")
-        logger.info("🛡️ SAFETY GUARANTEES:")
+        logger.info("🛡️ SECURITY GUARANTEES:")
         logger.info("   ✅ Repository state validated before installation")
         logger.info("   ✅ Only installer-created files committed")
         logger.info("   ✅ No user secrets or work-in-progress included")
         logger.info("   ✅ Manual review required via pull request")
         logger.info("   ✅ No direct commits to main branch")
+        logger.info("")
+        logger.info("⚠️ Remember: The pull request won't create itself!")
+        logger.info("   Use the link above to create it now.")
 
     def cleanup_on_failure(self) -> None:
         """Clean up if installation fails."""
-        if self.branch_name and self.original_branch:
-            try:
-                logger.info("🧹 Cleaning up after failure...")
+        try:
+            logger.info("🧹 Cleaning up after failure...")
 
+            # First, reset any staged changes
+            try:
+                self.git.run("reset", "HEAD")  # nosec B602
+                logger.info("✅ Reset staged changes")
+            except Exception as e:
+                logger.warning(f"Failed to reset staged changes: {e}")
+
+            # Remove tracked files that were created
+            tracked_files = self.file_tracker.get_all_tracked_files()
+            for file_path in tracked_files:
+                full_path = self.target_repo / file_path
+                if full_path.exists():
+                    try:
+                        full_path.unlink()
+                        logger.debug(f"Removed tracked file: {file_path}")
+                    except Exception as e:
+                        logger.warning(f"Failed to remove {file_path}: {e}")
+
+            # Remove tracked directories (in reverse order for nested dirs)
+            for dir_path in reversed(sorted(self.file_tracker.created_directories)):
+                full_path = self.target_repo / dir_path
+                if full_path.exists() and full_path.is_dir():
+                    try:
+                        # Only remove if empty
+                        full_path.rmdir()
+                        logger.debug(f"Removed tracked directory: {dir_path}")
+                    except Exception as e:
+                        # Directory might not be empty, that's okay
+                        pass
+
+            # Switch back to original branch and delete feature branch
+            if self.branch_name and self.original_branch:
                 # Switch back to original branch using secure wrapper
                 if self.original_branch:  # Type guard for mypy
                     try:
@@ -573,10 +642,10 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
                     except:
                         pass  # Best effort
 
-                logger.info("✅ Cleanup completed")
+            logger.info("✅ Cleanup completed")
 
-            except Exception as e:
-                logger.warning(f"Cleanup failed: {e}")
+        except Exception as e:
+            logger.warning(f"Cleanup failed: {e}")
 
     def install(self) -> bool:
         """Run complete installation process."""

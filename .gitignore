@@ -230,6 +230,7 @@ hugo_stats.json
 # except those in docs/commit-examples/ and docs/commit-logs/ (for templates & real logs).
 commit-*
 **/commit-*
+commit/
 
 # Never ignore documentation commit logs or commit-examples (for changelog/history/templates)
 !docs/commit-examples/commit-*
@@ -249,3 +250,10 @@ tests/installer-results/
 # Claude AI local workspace (contains user-specific settings and session data)
 .claude/
 **/.claude/
+
+############################
+# 🪟 WINDOWS PATH ISSUES
+############################
+# Windows sometimes creates these folders due to path parsing errors
+;C/
+;C:
