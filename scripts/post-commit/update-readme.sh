@@ -21,6 +21,12 @@ cd "$REPO_ROOT" || { echo "ERROR: Could not navigate to repository root"; exit 1
 LOG_DIR="$REPO_ROOT/docs/commit-logs/$BRANCH_NAME"
 README_FILE="$LOG_DIR/README.md"
 
+# 🚨 Spärr: säkerställ att vi inte skriver utanför tillåtna kataloger
+if [[ "$README_FILE" != "$REPO_ROOT/docs/commit-logs/"* ]]; then
+  echo "ERROR: Refusing to write outside docs/commit-logs/: $README_FILE"
+  exit 1
+fi
+
 # ✅ Kontrollera om loggmappen finns
 if [ ! -d "$LOG_DIR" ]; then
   echo "ERROR: Log directory $LOG_DIR does not exist. Skipping README update."
