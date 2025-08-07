@@ -29,18 +29,25 @@ def print_color(message: str, color: str = Colors.NC):
 def check_git_repo():
     """Check if we're in a git repository."""
     try:
-        subprocess.run(["git", "rev-parse", "--git-dir"], 
-                      check=True, capture_output=True)
-        return True
-    except subprocess.CalledProcessError:
+        result = subprocess.run(["git", "rev-parse", "--git-dir"], 
+                              check=True, capture_output=True, timeout=10,
+                              env={**os.environ, 'GIT_TERMINAL_PROMPT': '0'})
+        return result.returncode == 0
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return False
 
 def get_repo_root():
     """Get repository root directory."""
-    result = subprocess.run(["git", "rev-parse", "--show-toplevel"], 
-                          capture_output=True, text=True)
-    if result.returncode == 0:
-        return Path(result.stdout.strip())
+    try:
+        result = subprocess.run(["git", "rev-parse", "--show-toplevel"], 
+                              capture_output=True, text=True, timeout=10)
+        if result.returncode == 0 and result.stdout.strip():
+            repo_path = Path(result.stdout.strip()).resolve()
+            # Validate it's a real path
+            if repo_path.exists() and repo_path.is_dir():
+                return repo_path
+    except (subprocess.TimeoutExpired, Exception):
+        pass
     return None
 
 def check_hook_version(hook_path: Path):
@@ -111,12 +118,20 @@ def check_python():
 
 def check_git_config():
     """Check and set git configuration."""
+    import re
+    
     # Check user.name
     result = subprocess.run(["git", "config", "user.name"], 
                           capture_output=True, text=True)
     if not result.stdout.strip():
         print_color("   No git user.name set", Colors.YELLOW)
-        name = input("   Enter your name: ")
+        name = input("   Enter your name: ").strip()
+        
+        # Validate name (basic validation)
+        if not name or len(name) > 100 or not re.match(r'^[a-zA-Z\s.-]+$', name):
+            print_color("   Invalid name. Please use only letters, spaces, dots and hyphens.", Colors.RED)
+            return False
+            
         subprocess.run(["git", "config", "user.name", name])
     else:
         print_color(f"   ✅ Git user: {result.stdout.strip()}", Colors.GREEN)
@@ -126,10 +141,19 @@ def check_git_config():
                           capture_output=True, text=True)
     if not result.stdout.strip():
         print_color("   No git user.email set", Colors.YELLOW)
-        email = input("   Enter your email: ")
+        email = input("   Enter your email: ").strip()
+        
+        # Validate email format
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not email or len(email) > 254 or not re.match(email_pattern, email):
+            print_color("   Invalid email format.", Colors.RED)
+            return False
+            
         subprocess.run(["git", "config", "user.email", email])
     else:
         print_color(f"   ✅ Git email: {result.stdout.strip()}", Colors.GREEN)
+    
+    return True
 
 def install_dependencies():
     """Install Python dependencies if requirements.txt exists in the project."""

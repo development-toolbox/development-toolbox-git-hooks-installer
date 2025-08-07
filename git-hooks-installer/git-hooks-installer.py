@@ -79,7 +79,8 @@ class GitHooksInstaller:
         try:
             return self.git.get_current_branch()
         except (subprocess.CalledProcessError, SecureGitError) as e:
-            logger.error(f"Failed to get current branch: {e}")
+            logger.error("Failed to get current branch")
+            logger.debug(f"Branch detection error: {e}")  # Debug only
             return "main"  # Safe default
 
     def create_safe_feature_branch(self) -> bool:
@@ -97,7 +98,8 @@ class GitHooksInstaller:
             return True
 
         except (subprocess.CalledProcessError, SecureGitError) as e:
-            logger.error(f"Failed to create feature branch: {e}")
+            logger.error("Failed to create feature branch")
+            logger.debug(f"Branch creation error: {e}")  # Debug only
             return False
 
     def install_git_hooks(self) -> bool:
@@ -123,7 +125,8 @@ class GitHooksInstaller:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to install git hooks: {e}")
+            logger.error("Failed to install git hooks")
+            logger.debug(f"Hook installation error: {e}")  # Debug only
             return False
 
     def install_scripts_directory(self) -> bool:
@@ -164,7 +167,8 @@ class GitHooksInstaller:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to install scripts: {e}")
+            logger.error("Failed to install scripts")
+            logger.debug(f"Script installation error: {e}")  # Debug only
             return False
 
     def install_documentation(self) -> bool:
@@ -412,7 +416,8 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
             return True
 
         except subprocess.CalledProcessError as e:
-            logger.error(f"Failed to commit changes: {e}")
+            logger.error("Failed to commit changes")
+            logger.debug(f"Commit error: {e}")  # Debug only
             return False
 
     def push_feature_branch(self) -> bool:
@@ -438,7 +443,8 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
             return True
 
         except (subprocess.CalledProcessError, SecureGitError) as e:
-            logger.error(f"Failed to push feature branch: {e}")
+            logger.error("Failed to push feature branch")
+            logger.debug(f"Push error: {e}")  # Debug only
             logger.info("You can push manually with:")
             logger.info(f"  git push origin {self.branch_name}")
             return False  # Non-critical failure

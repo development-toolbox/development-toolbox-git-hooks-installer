@@ -169,8 +169,16 @@ class SecureGitWrapper:
         except subprocess.TimeoutExpired:
             raise SecureGitError(f"Git command timed out after {self.timeout} seconds")
         except subprocess.CalledProcessError as e:
-            logger.error(f"Git command failed: {e.stderr}")
-            raise
+            # Sanitize error output to prevent information disclosure
+            sanitized_cmd = " ".join(cmd[:2])  # Only show 'git <command>'
+            sanitized_error = "Command execution failed"
+            
+            # Log detailed error for debugging (but don't expose to user)
+            logger.debug(f"Git command failed: {' '.join(cmd)}")
+            logger.debug(f"Error output: {e.stderr}")
+            
+            # Raise sanitized error for user
+            raise SecureGitError(f"{sanitized_cmd}: {sanitized_error}")
     
     # Convenience methods for common Git operations
     

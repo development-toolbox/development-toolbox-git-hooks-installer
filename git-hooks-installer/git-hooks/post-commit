@@ -39,6 +39,19 @@ AUTHOR=$(git log -1 --pretty=format:"%an")
 DATE=$(git log -1 --pretty=format:"%ad" --date=iso)
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
+# Validate branch name to prevent command injection
+if ! [[ "$BRANCH_NAME" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
+  echo "ERROR: Invalid branch name detected: $BRANCH_NAME"
+  echo "Branch names must only contain alphanumeric characters, /, _, ., and -"
+  exit 1
+fi
+
+# Validate commit hash
+if ! [[ "$COMMIT_HASH" =~ ^[a-f0-9]{40}$ ]]; then
+  echo "ERROR: Invalid commit hash detected"
+  exit 1
+fi
+
 # Fetch changed files with statuses
 CHANGED_FILES=$(git show --pretty="" --name-status HEAD)
 
@@ -51,8 +64,8 @@ fi
 # Ensure we are in the repository root
 cd "$REPO_ROOT" || { echo "ERROR: Could not navigate to repository root"; exit 1; }
 
-# Define the log directory
-LOG_DIR="docs/commit-logs/$BRANCH_NAME"
+# Define the log directory (with validated branch name)
+LOG_DIR="docs/commit-logs/${BRANCH_NAME}"  # Using quotes for safety
 
 # Ensure the directory exists
 mkdir -p "$LOG_DIR" || { echo "ERROR: Could not create directory $LOG_DIR. Check permissions."; exit 1; }
@@ -105,8 +118,9 @@ fi
 echo "✅ Successfully staged: $LOG_FILE"
 
 # Update branch-specific README.md
-export BRANCH_NAME="$BRANCH_NAME"  # Pass branch name to the script
-bash "$REPO_ROOT/scripts/post-commit/update-readme.sh"
+export BRANCH_NAME="${BRANCH_NAME}"  # Pass validated branch name to the script
+export REPO_ROOT="${REPO_ROOT}"  # Pass repo root
+bash "${REPO_ROOT}/scripts/post-commit/update-readme.sh"
 
 
 # === INKLUDERA PYTHON-SKRIPTET FÖR GIT TIMELINE ===
@@ -135,7 +149,7 @@ fi
   # Optional Push: Controlled by an environment variable
 # Optional Push: Controlled by an environment variable
 if [ "$GIT_AUTO_PUSH" == "true" ]; then
-  git push origin "$BRANCH_NAME"
+  git push origin "${BRANCH_NAME}"  # Using validated branch name
   echo "DEBUG: Successfully pushed changes to remote."
 else
   echo "🚀 [INFO] Auto-push disabled. Skipping push step."

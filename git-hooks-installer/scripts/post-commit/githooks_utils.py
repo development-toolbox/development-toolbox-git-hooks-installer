@@ -8,16 +8,49 @@ import os
 
 def run_git_command(command):
     """Run a git command and return the output as lines."""
-    result = subprocess.run(command, capture_output=True, text=True)
+    # Validate that command starts with 'git'
+    if not command or command[0] != "git":
+        print("❌ ERROR: Only git commands are allowed")
+        sys.exit(1)
+    
+    # Add timeout to prevent hanging
+    try:
+        result = subprocess.run(
+            command, 
+            capture_output=True, 
+            text=True,
+            timeout=30,  # 30 second timeout
+            env={**os.environ, 'GIT_TERMINAL_PROMPT': '0'}  # Disable git prompts
+        )
+    except subprocess.TimeoutExpired:
+        print(f"❌ Git command timed out: {' '.join(command)}")
+        sys.exit(1)
+    
     if result.returncode != 0:
-        print(f"❌ Git command failed: {' '.join(command)}\n{result.stderr}")
+        # Sanitize error output to prevent information disclosure
+        sanitized_error = result.stderr[:500] if result.stderr else "Unknown error"
+        print(f"❌ Git command failed: {' '.join(command)}")
         sys.exit(1)
     return result.stdout.strip().splitlines()
 
 
 def get_repo_root():
     """Get the root of the current git repository."""
-    return subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"], 
+            capture_output=True, 
+            text=True,
+            timeout=10,
+            env={**os.environ, 'GIT_TERMINAL_PROMPT': '0'}
+        )
+        if result.returncode != 0:
+            print("❌ ERROR: Not in a git repository")
+            sys.exit(1)
+        return result.stdout.strip()
+    except subprocess.TimeoutExpired:
+        print("❌ ERROR: Git command timed out")
+        sys.exit(1)
 
 
 def assert_inside_repo(path: Path, repo_root: Path, description: str = "path"):
@@ -35,7 +68,17 @@ def assert_inside_repo(path: Path, repo_root: Path, description: str = "path"):
 
 def get_repo_url():
     """Automatically detect the GitHub repository URL."""
-    remote_url = run_git_command(["git", "remote", "get-url", "origin"])[0]
+    remote_urls = run_git_command(["git", "remote", "get-url", "origin"])
+    if not remote_urls:
+        return ""  # No remote configured
+    
+    remote_url = remote_urls[0]
+    
+    # Validate URL format to prevent injection
+    import re
+    if not re.match(r'^(https?://|git@)[\w.-]+(/|:)[\w.-]+/[\w.-]+(\.git)?$', remote_url):
+        return ""  # Invalid URL format
+    
     if remote_url.startswith("git@"):  # Convert SSH to HTTPS
         return remote_url.replace(":", "/").replace("git@", "https://").replace(".git", "")
     return remote_url.replace(".git", "")

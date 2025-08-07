@@ -7,6 +7,9 @@ preventing accidental commits of user secrets or work-in-progress files.
 
 import json
 import subprocess
+import fcntl
+import tempfile
+import os
 from pathlib import Path
 from typing import List, Dict, Set, Optional
 from datetime import datetime
@@ -18,6 +21,12 @@ logger = logging.getLogger(__name__)
 class FileTracker:
     """Tracks files created/modified by installer for safe git operations."""
     
+    # Resource limits to prevent exhaustion
+    MAX_FILES = 1000
+    MAX_DIRECTORIES = 100
+    MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB per file
+    MAX_TOTAL_SIZE = 100 * 1024 * 1024  # 100MB total
+    
     def __init__(self, repo_path: Path):
         """Initialize file tracker for given repository."""
         self.repo_path = repo_path
@@ -25,21 +34,56 @@ class FileTracker:
         self.modified_files: List[str] = []
         self.created_directories: List[str] = []
         self.start_time = datetime.now()
+        self.total_size_tracked = 0
     
     def track_file_creation(self, file_path: str, category: str = "general") -> None:
         """Track a file created by the installer."""
+        # Check resource limits
+        if len(self.created_files) >= self.MAX_FILES:
+            raise ValueError(f"Maximum file limit exceeded ({self.MAX_FILES})")
+            
         normalized_path = str(Path(file_path)).replace('\\', '/')
+        
+        # Check file size if it exists
+        full_path = self.repo_path / normalized_path
+        if full_path.exists():
+            file_size = full_path.stat().st_size
+            if file_size > self.MAX_FILE_SIZE:
+                raise ValueError(f"File too large: {normalized_path} ({file_size} bytes)")
+            if self.total_size_tracked + file_size > self.MAX_TOTAL_SIZE:
+                raise ValueError(f"Total size limit exceeded ({self.MAX_TOTAL_SIZE} bytes)")
+            self.total_size_tracked += file_size
+            
         self.created_files.append(normalized_path)
         logger.debug(f"📝 Tracked created file ({category}): {normalized_path}")
     
     def track_file_modification(self, file_path: str, category: str = "general") -> None:
         """Track a file modified by the installer."""
+        # Check resource limits
+        if len(self.modified_files) >= self.MAX_FILES:
+            raise ValueError(f"Maximum file limit exceeded ({self.MAX_FILES})")
+            
         normalized_path = str(Path(file_path)).replace('\\', '/')
+        
+        # Check file size if it exists
+        full_path = self.repo_path / normalized_path
+        if full_path.exists():
+            file_size = full_path.stat().st_size
+            if file_size > self.MAX_FILE_SIZE:
+                raise ValueError(f"File too large: {normalized_path} ({file_size} bytes)")
+            if self.total_size_tracked + file_size > self.MAX_TOTAL_SIZE:
+                raise ValueError(f"Total size limit exceeded ({self.MAX_TOTAL_SIZE} bytes)")
+            self.total_size_tracked += file_size
+            
         self.modified_files.append(normalized_path)
         logger.debug(f"📝 Tracked modified file ({category}): {normalized_path}")
     
     def track_directory_creation(self, dir_path: str) -> None:
         """Track a directory created by the installer."""
+        # Check resource limits
+        if len(self.created_directories) >= self.MAX_DIRECTORIES:
+            raise ValueError(f"Maximum directory limit exceeded ({self.MAX_DIRECTORIES})")
+            
         normalized_path = str(Path(dir_path)).replace('\\', '/')
         self.created_directories.append(normalized_path)
         logger.debug(f"📁 Tracked created directory: {normalized_path}")
@@ -50,14 +94,33 @@ class FileTracker:
     
     def validate_staging_area(self, debug: bool = False) -> bool:
         """Ensure staging area contains only tracked files with improved path matching."""
+        # Use a temporary file for atomic read of staging area
+        with tempfile.NamedTemporaryFile(mode='w+', delete=False) as tmp_file:
+            tmp_path = tmp_file.name
+        
         try:
-            # Get currently staged files
+            # Get currently staged files atomically
             result = subprocess.run(
                 ["git", "-C", str(self.repo_path), "diff", "--cached", "--name-only"],
-                capture_output=True, text=True, encoding='utf-8', errors='replace', check=True
+                capture_output=True, text=True, encoding='utf-8', errors='replace', check=True,
+                timeout=10  # Add timeout to prevent hanging
             )
             
-            staged_files_raw = result.stdout.strip().split('\n') if result.stdout.strip() else []
+            # Write to temp file for atomic operation
+            with open(tmp_path, 'w') as f:
+                f.write(result.stdout)
+            
+            # Read back atomically
+            with open(tmp_path, 'r') as f:
+                staged_output = f.read()
+            
+            staged_files_raw = staged_output.strip().split('\n') if staged_output.strip() else []
+            
+            # Clean up temp file
+            try:
+                os.unlink(tmp_path)
+            except:
+                pass  # Best effort
             tracked_files_raw = self.get_all_tracked_files()
             
             # Normalize all paths consistently (use forward slashes, strip whitespace)
@@ -125,14 +188,22 @@ class FileTracker:
             return False
     
     def safe_add_tracked_files(self, skip_validation: bool = False) -> bool:
-        """Add only tracked files to git staging area."""
+        """Add only tracked files to git staging area with atomic operations."""
         tracked_files = self.get_all_tracked_files()
         
         if not tracked_files:
             logger.info("No files to add to staging area.")
             return True
         
+        # Create a lock file to prevent concurrent modifications
+        lock_file_path = self.repo_path / ".git" / "installer.lock"
+        lock_file = None
+        
         try:
+            # Acquire exclusive lock to prevent race conditions
+            lock_file = open(lock_file_path, 'w')
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            
             # Import secure wrapper if available
             try:
                 from secure_git_wrapper import SecureGitWrapper
@@ -141,6 +212,14 @@ class FileTracker:
             except ImportError:
                 use_secure = False
             
+            # First, reset staging area to ensure clean state
+            subprocess.run(
+                ["git", "-C", str(self.repo_path), "reset", "--quiet"],
+                check=True, capture_output=True, encoding='utf-8', errors='replace'
+            )  # nosec B602 - Safe git command
+            
+            # Collect all valid files first
+            valid_files = []
             for file_path in tracked_files:
                 full_path = self.repo_path / file_path
                 
@@ -148,25 +227,45 @@ class FileTracker:
                 if not full_path.exists():
                     logger.warning(f"⚠️ Tracked file does not exist: {file_path}")
                     continue
-                
-                # Add file to staging area
+                    
+                valid_files.append(file_path)
+            
+            # Add all files in a single atomic operation if possible
+            if valid_files:
                 if use_secure:
-                    git.add_file(file_path)  # nosec B602 - Using SecureGitWrapper
+                    # Add files one by one with secure wrapper
+                    for file_path in valid_files:
+                        git.add_file(file_path)  # nosec B602 - Using SecureGitWrapper
+                        logger.info(f"📄 Added to staging: {file_path}")
                 else:
+                    # Add all files at once for atomicity
                     subprocess.run(
-                        ["git", "-C", str(self.repo_path), "add", file_path],
+                        ["git", "-C", str(self.repo_path), "add", "--"] + valid_files,
                         check=True, capture_output=True, encoding='utf-8', errors='replace'
-                    )  # nosec B602 - Validated file path
-                logger.info(f"📄 Added to staging: {file_path}")
+                    )  # nosec B602 - Validated file paths
+                    for file_path in valid_files:
+                        logger.info(f"📄 Added to staging: {file_path}")
             
             # Validate that only our files are staged (unless skipped)
             if skip_validation:
                 return True
             return self.validate_staging_area()
             
+        except BlockingIOError:
+            logger.error("Another git operation is in progress. Please wait and try again.")
+            return False
         except (subprocess.CalledProcessError, Exception) as e:
             logger.error(f"Failed to add tracked files: {e}")
             return False
+        finally:
+            # Always release the lock
+            if lock_file:
+                try:
+                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+                    lock_file.close()
+                    lock_file_path.unlink(missing_ok=True)
+                except:
+                    pass  # Best effort cleanup
     
     def detect_untracked_changes(self) -> Dict[str, List[str]]:
         """Detect any untracked changes that might be accidentally committed."""

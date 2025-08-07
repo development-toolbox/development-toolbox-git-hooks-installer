@@ -29,6 +29,18 @@ def generate_git_timeline():
     if not branch_name:
         print("❌ ERROR: Branch name not set. Exiting.")
         sys.exit(1)
+    
+    # Validate branch name to prevent injection attacks
+    import re
+    if not re.match(r'^[a-zA-Z0-9/_.-]+$', branch_name):
+        print(f"❌ ERROR: Invalid branch name: {branch_name}")
+        print("Branch names must only contain alphanumeric characters, /, _, ., and -")
+        sys.exit(1)
+    
+    # Additional length check
+    if len(branch_name) > 255:
+        print("❌ ERROR: Branch name too long")
+        sys.exit(1)
 
     print(f"🌿 Active Branch: {branch_name}")
 
@@ -70,11 +82,15 @@ def generate_git_timeline():
 
         md_file.write("\n## ✅ Summary\n- **Here you can put a summary if you like.**\n- **PR and MR inclusion (simulated).**\n")
 
-    subprocess.run(["git", "add", timeline_file_path], check=True)
+    # Use -- to prevent option injection
+    subprocess.run(["git", "add", "--", timeline_file_path], check=True)
     commit_hash = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     commit_message = f"Update commit timeline: {commit_hash}"
 
     try:
+        # Validate commit message length
+        if len(commit_message) > 5000:
+            commit_message = commit_message[:5000]
         subprocess.run(["git", "commit", "-m", commit_message], check=True)
         print(f"📈 Git Timeline Updated for branch: {branch_name}")
         print(f"✅ Timeline report generated: {timeline_file_path}")

@@ -18,7 +18,19 @@ class RepositoryValidator:
     
     def __init__(self, repo_path: Path):
         """Initialize validator for given repository path."""
-        self.repo_path = repo_path
+        # Validate repo_path
+        if not isinstance(repo_path, Path):
+            repo_path = Path(repo_path)
+        
+        # Ensure path is absolute and resolved
+        self.repo_path = repo_path.resolve()
+        
+        # Check path exists and is a directory
+        if not self.repo_path.exists():
+            raise ValueError(f"Repository path does not exist: {self.repo_path}")
+        if not self.repo_path.is_dir():
+            raise ValueError(f"Repository path is not a directory: {self.repo_path}")
+            
         self.validation_errors: List[str] = []
     
     def validate_git_repository(self) -> bool:
@@ -34,7 +46,9 @@ class RepositoryValidator:
         try:
             result = subprocess.run(
                 ["git", "-C", str(self.repo_path), "status", "--porcelain"],
-                capture_output=True, text=True, check=True
+                capture_output=True, text=True, check=True,
+                timeout=10,  # Add timeout
+                env={**subprocess.os.environ, 'GIT_TERMINAL_PROMPT': '0'}  # Disable prompts
             )
             
             if result.stdout.strip():
@@ -69,13 +83,15 @@ class RepositoryValidator:
             # Check user.name
             name_result = subprocess.run(
                 ["git", "-C", str(self.repo_path), "config", "user.name"],
-                capture_output=True, text=True, check=False
+                capture_output=True, text=True, check=False, timeout=5,
+                env={**subprocess.os.environ, 'GIT_TERMINAL_PROMPT': '0'}
             )
             
             # Check user.email
             email_result = subprocess.run(
                 ["git", "-C", str(self.repo_path), "config", "user.email"],
-                capture_output=True, text=True, check=False
+                capture_output=True, text=True, check=False, timeout=5,
+                env={**subprocess.os.environ, 'GIT_TERMINAL_PROMPT': '0'}
             )
             
             if name_result.returncode != 0 or not name_result.stdout.strip():
@@ -98,10 +114,23 @@ class RepositoryValidator:
     
     def validate_no_conflicting_branches(self, branch_pattern: str) -> bool:
         """Ensure no existing branches match the pattern we want to create."""
+        # Validate branch pattern to prevent injection
+        import re
+        if not branch_pattern or not re.match(r'^[a-zA-Z0-9/_.*-]+$', branch_pattern):
+            self.validation_errors.append(f"Invalid branch pattern: {branch_pattern}")
+            return False
+        
+        # Limit pattern length
+        if len(branch_pattern) > 255:
+            self.validation_errors.append("Branch pattern too long")
+            return False
+            
         try:
             result = subprocess.run(
                 ["git", "-C", str(self.repo_path), "branch", "--list", branch_pattern],
-                capture_output=True, text=True, check=True
+                capture_output=True, text=True, check=True,
+                timeout=10,  # Add timeout
+                env={**subprocess.os.environ, 'GIT_TERMINAL_PROMPT': '0'}  # Disable prompts
             )
             
             if result.stdout.strip():
@@ -172,7 +201,9 @@ class RepositoryValidator:
             # Check for untracked files matching sensitive patterns
             result = subprocess.run(
                 ["git", "-C", str(self.repo_path), "ls-files", "--others", "--exclude-standard"],
-                capture_output=True, text=True, check=True
+                capture_output=True, text=True, check=True,
+                timeout=10,  # Add timeout
+                env={**subprocess.os.environ, 'GIT_TERMINAL_PROMPT': '0'}  # Disable prompts
             )
             
             untracked_files = result.stdout.strip().split('\n') if result.stdout.strip() else []
