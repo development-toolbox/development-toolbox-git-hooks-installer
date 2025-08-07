@@ -1,6 +1,6 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-08-08 00:05:14
+> **Generated on:** 2025-08-08 00:06:47
 
 > **Branch:** `main`
 
@@ -8,7 +8,7 @@
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
 | fetures/update-docs | 6ab45de | Johan Sörell |
-| main | ec6f52c | Johan Sörell |
+| main | ea38dad | Johan Sörell |
 | mybranch | 5b5b53f | Johan Sörell |
 | origin | 68702ee | Johan Sörell |
 | origin/bugfix/git-hooks-installer-switches-to-main | 76448ae | Johan Sörell |
@@ -28,6 +28,16 @@
 | 68702ee | Merge pull request #2 from development-toolbox/fix/staging-validation-and-version-sync | 2025-07-25 22:02:45 +0200 |
 
 ## 📁 Commit Log
+### ✅ Commit: [ea38dad](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ea38dad)
+- **Date:** 2025-08-08 00:06:47 +0200
+- **Author:** Johan Sörell
+- **Message:** chore(githooks): add template dir and changed to executable on the file!
+
+### ✅ Commit: [9171d84](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/9171d84)
+- **Date:** 2025-08-08 00:05:14 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: ec6f52c8f86ad0ae1e5c935cb0f4910390b317d9
+
 ### ✅ Commit: [ec6f52c](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ec6f52c)
 - **Date:** 2025-08-08 00:05:14 +0200
 - **Author:** Johan Sörell
