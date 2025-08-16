@@ -146,10 +146,19 @@ class GitHooksInstaller:
                 scripts_dst.mkdir(parents=True, exist_ok=True)
                 self.file_tracker.track_directory_creation("scripts")
 
-            # Copy all files with tracking
+            # Copy all files with tracking, excluding __pycache__ and other ignored files
             for src_file in scripts_src.rglob("*"):
                 if src_file.is_file():
                     rel_path = src_file.relative_to(scripts_src)
+                    
+                    # Skip __pycache__ directories and common ignored files
+                    if "__pycache__" in str(rel_path):
+                        continue
+                    if rel_path.name.endswith(('.pyc', '.pyo', '.pyd')):
+                        continue
+                    if rel_path.name.startswith('.'):
+                        continue
+                    
                     dst_file = scripts_dst / rel_path
 
                     # Ensure parent directory exists
@@ -193,10 +202,19 @@ class GitHooksInstaller:
                 docs_dst.mkdir(parents=True, exist_ok=True)
                 self.file_tracker.track_directory_creation("docs/githooks")
 
-            # Copy documentation files
+            # Copy documentation files, excluding __pycache__ and other ignored files
             for src_file in docs_src.rglob("*"):
                 if src_file.is_file():
                     rel_path = src_file.relative_to(docs_src)
+                    
+                    # Skip __pycache__ directories and common ignored files
+                    if "__pycache__" in str(rel_path):
+                        continue
+                    if rel_path.name.endswith(('.pyc', '.pyo', '.pyd')):
+                        continue
+                    if rel_path.name.startswith('.'):
+                        continue
+                    
                     dst_file = docs_dst / rel_path
 
                     # Ensure parent directory exists
@@ -234,6 +252,14 @@ class GitHooksInstaller:
                 setup_dst.mkdir(parents=True, exist_ok=True)
                 self.file_tracker.track_directory_creation("developer-setup")
 
+            # Define ignore patterns for shutil.copytree
+            def ignore_patterns(path, names):
+                ignored = []
+                for name in names:
+                    if name == '__pycache__' or name.endswith(('.pyc', '.pyo', '.pyd')) or name.startswith('.'):
+                        ignored.append(name)
+                return ignored
+            
             # Copy entire developer-setup structure
             for src_item in setup_src.iterdir():
                 if src_item.is_dir():
@@ -241,13 +267,21 @@ class GitHooksInstaller:
                     dir_existed = dst_dir.exists()
                     if dir_existed:
                         shutil.rmtree(dst_dir)
-                    shutil.copytree(src_item, dst_dir)
+                    shutil.copytree(src_item, dst_dir, ignore=ignore_patterns)
 
                     # Track directory only if it didn't exist before
                     if not dir_existed:
                         self.file_tracker.track_directory_creation(f"developer-setup/{src_item.name}")
                     for file_path in dst_dir.rglob("*"):
                         if file_path.is_file():
+                            # Skip __pycache__ directories and common ignored files
+                            if "__pycache__" in str(file_path):
+                                continue
+                            if file_path.name.endswith(('.pyc', '.pyo', '.pyd')):
+                                continue
+                            if file_path.name.startswith('.'):
+                                continue
+                            
                             rel_path = file_path.relative_to(self.target_repo)
                             self.file_tracker.track_file_creation(str(rel_path), "developer-setup")
 
@@ -449,6 +483,279 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
             logger.info(f"  git push origin {self.branch_name}")
             return False  # Non-critical failure
 
+    def check_github_auth(self) -> tuple[str, str]:
+        """Check available GitHub authentication methods.
+        
+        Returns:
+            (method, credential) where method is 'token', 'gh', or None
+        """
+        import os
+        
+        # First check for GitHub token
+        github_token = os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN')
+        if github_token:
+            logger.info("✅ Found GitHub token in environment")
+            return ('token', github_token)
+        
+        # Check for gh CLI
+        gh_check = subprocess.run(
+            ["which", "gh"],
+            capture_output=True,
+            check=False
+        )
+        
+        if gh_check.returncode == 0:
+            # Check if gh is authenticated
+            auth_check = subprocess.run(
+                ["gh", "auth", "status"],
+                capture_output=True,
+                check=False
+            )
+            if auth_check.returncode == 0:
+                logger.info("✅ Found gh CLI and user is authenticated")
+                return ('gh', 'authenticated')
+            else:
+                logger.info("ℹ️ Found gh CLI but user is not authenticated")
+        
+        return (None, None)
+    
+    def setup_github_auth(self) -> tuple[str, str]:
+        """Interactively help user set up GitHub authentication."""
+        logger.info("")
+        logger.info("🔐 GitHub authentication is needed to create pull requests automatically")
+        logger.info("")
+        logger.info("Choose an option:")
+        logger.info("  1. Set up GitHub token (recommended for CI/CD)")
+        logger.info("  2. Install and configure gh CLI (recommended for local development)")
+        logger.info("  3. Skip automatic PR creation")
+        logger.info("")
+        
+        try:
+            choice = input("Enter your choice (1/2/3): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            logger.info("\n⏭️ Skipping automatic PR setup")
+            return (None, None)
+        
+        if choice == "1":
+            logger.info("")
+            logger.info("📝 To set up a GitHub token:")
+            logger.info("  1. Go to https://github.com/settings/tokens")
+            logger.info("  2. Click 'Generate new token (classic)'")
+            logger.info("  3. Give it 'repo' scope")
+            logger.info("  4. Copy the token")
+            logger.info("")
+            
+            try:
+                token = input("Paste your token here (or press Enter to skip): ").strip()
+                if token:
+                    # Save to .env file
+                    env_file = self.target_repo / ".env"
+                    logger.info(f"💾 Saving token to {env_file}")
+                    
+                    # Read existing .env if it exists
+                    env_lines = []
+                    if env_file.exists():
+                        with open(env_file, 'r') as f:
+                            env_lines = f.readlines()
+                    
+                    # Update or add GITHUB_TOKEN
+                    token_found = False
+                    for i, line in enumerate(env_lines):
+                        if line.startswith('GITHUB_TOKEN=') or line.startswith('GH_TOKEN='):
+                            env_lines[i] = f"GITHUB_TOKEN={token}\n"
+                            token_found = True
+                            break
+                    
+                    if not token_found:
+                        env_lines.append(f"GITHUB_TOKEN={token}\n")
+                    
+                    # Write back
+                    with open(env_file, 'w') as f:
+                        f.writelines(env_lines)
+                    
+                    # Also set in current environment
+                    import os
+                    os.environ['GITHUB_TOKEN'] = token
+                    
+                    logger.info("✅ GitHub token saved to .env file")
+                    logger.info("   Note: Make sure .env is in your .gitignore!")
+                    return ('token', token)
+            except (EOFError, KeyboardInterrupt):
+                pass
+                
+        elif choice == "2":
+            logger.info("")
+            logger.info("📦 To install gh CLI:")
+            logger.info("  • macOS:    brew install gh")
+            logger.info("  • Linux:    See https://github.com/cli/cli#installation")
+            logger.info("  • Windows:  winget install GitHub.cli")
+            logger.info("")
+            logger.info("After installation, run: gh auth login")
+            logger.info("")
+            input("Press Enter when you've installed and authenticated gh CLI...")
+            
+            # Check if it worked
+            auth_check = subprocess.run(
+                ["gh", "auth", "status"],
+                capture_output=True,
+                check=False
+            )
+            if auth_check.returncode == 0:
+                logger.info("✅ gh CLI is now authenticated!")
+                return ('gh', 'authenticated')
+            else:
+                logger.info("⚠️ gh CLI authentication not detected")
+        
+        logger.info("⏭️ Skipping automatic PR creation")
+        return (None, None)
+
+    def create_pull_request(self) -> bool:
+        """Create pull request automatically using GitHub API or gh CLI."""
+        try:
+            logger.info("🔄 Checking GitHub authentication...")
+            
+            # Get remote URL to determine if it's GitHub
+            result = self.git.run("remote", "get-url", "origin", check=False)
+            if result.returncode != 0:
+                return False
+                
+            remote_url = result.stdout.strip()
+            
+            # Parse GitHub repo info
+            if 'github.com' not in remote_url:
+                logger.info("ℹ️ Not a GitHub repository - skipping automatic PR creation")
+                return False
+            
+            # Extract owner and repo from URL
+            import re
+            # Handle both SSH and HTTPS URLs
+            if remote_url.startswith('git@github.com:'):
+                match = re.match(r'git@github.com:([^/]+)/([^.]+)', remote_url)
+            else:
+                match = re.match(r'https://github.com/([^/]+)/([^.]+)', remote_url)
+            
+            if not match:
+                logger.warning("Could not parse GitHub repository URL")
+                return False
+                
+            owner, repo = match.groups()
+            repo = repo.replace('.git', '')  # Remove .git suffix if present
+            
+            # Check authentication
+            auth_method, auth_cred = self.check_github_auth()
+            
+            # If no auth available, offer to set it up
+            if not auth_method:
+                auth_method, auth_cred = self.setup_github_auth()
+                if not auth_method:
+                    return False
+            
+            # Prepare PR body
+            pr_body = f"""## Git Hooks Installation
+
+This PR was automatically created by the git-hooks-installer.
+
+### Changes included:
+- Git hooks for automated commit documentation
+- Scripts for generating commit logs and timelines  
+- Developer setup tools
+- Documentation
+
+### Installation Summary:
+- Created {len(self.file_tracker.created_files)} files
+- Modified {len(self.file_tracker.modified_files)} files
+- Created {len(self.file_tracker.created_directories)} directories
+
+### Security guarantees:
+✅ Repository state validated before installation
+✅ Only installer-created files committed
+✅ No user secrets or work-in-progress included
+✅ Manual review required via pull request
+
+Please review the changes and merge if everything looks good.
+
+---
+*Automated by git-hooks-installer v1.0.0*
+"""
+            
+            logger.info("🚀 Creating pull request...")
+            
+            # Use the appropriate method
+            if auth_method == 'gh':
+                # Use gh CLI
+                pr_result = subprocess.run(
+                    [
+                        "gh", "pr", "create",
+                        "--base", self.original_branch,
+                        "--head", self.branch_name,
+                        "--title", "feat: Install git hooks for automated documentation",
+                        "--body", pr_body
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    cwd=str(self.target_repo)
+                )
+                
+                if pr_result.returncode == 0:
+                    pr_url = pr_result.stdout.strip()
+                    logger.info(f"✅ Pull request created successfully!")
+                    logger.info(f"   🔗 {pr_url}")
+                    return True
+                else:
+                    if "already exists" in pr_result.stderr:
+                        logger.info("ℹ️ Pull request already exists for this branch")
+                    else:
+                        logger.warning(f"⚠️ Could not create PR: {pr_result.stderr}")
+                    return False
+                    
+            elif auth_method == 'token':
+                # Use GitHub API with token
+                import json
+                import urllib.request
+                import urllib.error
+                
+                pr_data = {
+                    "title": "feat: Install git hooks for automated documentation",
+                    "head": self.branch_name,
+                    "base": self.original_branch,
+                    "body": pr_body
+                }
+                
+                api_url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
+                headers = {
+                    "Authorization": f"token {auth_cred}",
+                    "Accept": "application/vnd.github.v3+json",
+                    "Content-Type": "application/json"
+                }
+                
+                req = urllib.request.Request(
+                    api_url,
+                    data=json.dumps(pr_data).encode('utf-8'),
+                    headers=headers,
+                    method='POST'
+                )
+                
+                try:
+                    response = urllib.request.urlopen(req)
+                    pr_response = json.loads(response.read().decode('utf-8'))
+                    pr_url = pr_response.get('html_url', '')
+                    logger.info(f"✅ Pull request created successfully!")
+                    logger.info(f"   🔗 {pr_url}")
+                    return True
+                except urllib.error.HTTPError as e:
+                    if e.code == 422:
+                        # PR might already exist
+                        logger.info("ℹ️ Pull request may already exist for this branch")
+                    else:
+                        error_body = e.read().decode('utf-8')
+                        logger.warning(f"⚠️ Could not create PR: {error_body}")
+                    return False
+                
+        except Exception as e:
+            logger.warning(f"⚠️ Could not create PR: {e}")
+            return False
+
     def check_installation_status(self) -> bool:
         """Check and report current installation status."""
         logger.info("🔍 Checking git hooks installation status...")
@@ -545,6 +852,8 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
         logger.info(f"   2. Create pull request: {self.branch_name} → {self.original_branch}")
         logger.info("   3. Have team member review the changes")
         logger.info("   4. Merge after approval and testing")
+        logger.info("")
+        logger.info(f"📌 Note: You will be returned to your original branch ({self.original_branch}) after installation")
         logger.info("")
 
         # Try to generate platform-specific PR URL
@@ -689,10 +998,24 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
                 return False
 
             # Push feature branch (non-critical if fails)
-            self.push_feature_branch()
+            pushed = self.push_feature_branch()
 
-            # Phase 5: Generate PR instructions
+            # Phase 5: Create PR automatically if push succeeded
+            if pushed:
+                self.create_pull_request()
+
+            # Phase 6: Generate PR instructions (in case auto-creation failed)
             self.generate_pr_instructions()
+
+            # Phase 7: Switch back to original branch (restore developer's context)
+            if self.original_branch:
+                try:
+                    logger.info(f"🔄 Switching back to original branch: {self.original_branch}")
+                    self.git.checkout_branch(self.original_branch)
+                    logger.info(f"✅ Returned to branch: {self.original_branch}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Could not switch back to {self.original_branch}: {e}")
+                    logger.info(f"   You can manually switch back with: git checkout {self.original_branch}")
 
             return True
 

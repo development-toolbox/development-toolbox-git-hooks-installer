@@ -6,7 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Git hooks installer system that automates commit logging and documentation. Installs post-commit hooks to generate detailed commit logs, timelines, and maintains documentation following Conventional Commits standards. 
 
-**Security-Hardened (v1.1.0):** Features comprehensive security controls including command injection prevention, path traversal protection, race condition mitigation, and resource exhaustion safeguards. PR-only workflow with mandatory manual review.
+**Security-Hardened (v1.2.0):** Features comprehensive security controls including command injection prevention, path traversal protection, race condition mitigation, and resource exhaustion safeguards. PR-only workflow with mandatory manual review and automatic PR creation.
+
+**Recent Improvements (v1.2.0):**
+- ✅ Fixed __pycache__ file exclusion (no longer tries to commit Python cache files)
+- ✅ Automatic return to original branch (preserves developer workflow)
+- ✅ Intelligent GitHub authentication (supports both tokens and gh CLI)
+- ✅ Automatic PR creation with interactive setup for missing auth
 
 ## Commands
 
@@ -50,6 +56,23 @@ python git-hooks-installer/git-hooks-installer.py -c
 
 # Manual developer setup (bypasses PR workflow)
 python git-hooks-installer/developer-setup/setup_githooks.py
+```
+
+### GitHub Authentication (NEW v1.2.0)
+The installer now supports automatic PR creation with intelligent authentication:
+
+```bash
+# Option 1: GitHub Token (recommended for CI/CD)
+export GITHUB_TOKEN=your_token_here
+python git-hooks-installer/git-hooks-installer.py [target-repo]
+
+# Option 2: GitHub CLI (recommended for local development)
+gh auth login
+python git-hooks-installer/git-hooks-installer.py [target-repo]
+
+# Option 3: Interactive setup (installer will guide you)
+python git-hooks-installer/git-hooks-installer.py [target-repo]
+# Choose: 1) Set up token, 2) Install gh CLI, 3) Skip
 ```
 
 ### Code Quality
@@ -137,16 +160,22 @@ Example: feat(installer): add repository validation
 
 **Critical:** Never use `--auto-merge` flag (security risk)
 
-### Installation Flow
+### Installation Flow (v1.2.0)
 
-1. Validates repository state
-2. Creates feature branch (automated installations only)
-3. Copies hooks to `.git/hooks/`
-4. Installs developer-setup files to repository root
-5. Updates .gitignore
-6. Installs CI/CD files if detected
-7. Commits tracked files only
-8. Provides PR creation instructions
+1. **Pre-flight checks** - Validates repository state and safety
+2. **Branch management** - Creates feature branch, remembers original branch
+3. **File installation** - Copies hooks, scripts, docs (excludes __pycache__)
+4. **Secure tracking** - Uses FileTracker to track only installer files
+5. **Commit and push** - Commits tracked files, pushes feature branch
+6. **Auto PR creation** - Creates PR using GitHub token or gh CLI
+7. **Branch restoration** - Returns developer to original branch
+8. **Professional finish** - Provides PR link and next steps
+
+**Key Improvements:**
+- No more __pycache__ file conflicts with .gitignore
+- Developer stays on their original branch throughout process
+- Automatic PR creation when GitHub auth is available
+- Interactive setup guides for missing authentication
 
 ### Security Features (v1.1.0)
 
