@@ -1,6 +1,6 @@
 # 📊 Git Commit Timeline
 
-> **Generated on:** 2025-08-08 00:06:47
+> **Generated on:** 2025-08-16 22:31:41
 
 > **Branch:** `main`
 
@@ -8,15 +8,15 @@
 | **Branch Name** | **Last Commit** | **Author** |
 |----------------|--------------|------------|
 | fetures/update-docs | 6ab45de | Johan Sörell |
-| main | ea38dad | Johan Sörell |
+| main | 46feae3 | Johan Sörell |
 | mybranch | 5b5b53f | Johan Sörell |
-| origin | 68702ee | Johan Sörell |
+| origin | c577328 | Johan Sörell |
 | origin/bugfix/git-hooks-installer-switches-to-main | 76448ae | Johan Sörell |
 | origin/development | 32b3f54 | Johan Sörell |
 | origin/feat/githooks-installation-20250725-181655 | 0e10e10 | Johan Sörell |
 | origin/fetures/update-docs | dbaea18 | Johan Sörell |
 | origin/fix/staging-validation-and-version-sync | c5b2182 | Johan Sörell |
-| origin/main | 68702ee | Johan Sörell |
+| origin/main | c577328 | Johan Sörell |
 
 ## 🏷️ Tags
 | **Tag** | **Commit Hash** | **Tagged On** |
@@ -28,6 +28,16 @@
 | 68702ee | Merge pull request #2 from development-toolbox/fix/staging-validation-and-version-sync | 2025-07-25 22:02:45 +0200 |
 
 ## 📁 Commit Log
+### ✅ Commit: [46feae3](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/46feae3)
+- **Date:** 2025-08-16 22:31:41 +0200
+- **Author:** Johan Sörell
+- **Message:** feat(docs): comprehensive documentation restructure and v1.2.0 improvements
+
+### ✅ Commit: [c577328](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/c577328)
+- **Date:** 2025-08-08 00:06:47 +0200
+- **Author:** Johan Sörell
+- **Message:** Update commit timeline: ea38dad900b06d388a9a775a89436d2dd800cdb3
+
 ### ✅ Commit: [ea38dad](https://github.com/development-toolbox/development-toolbox-git-hooks-installer/commit/ea38dad)
 - **Date:** 2025-08-08 00:06:47 +0200
 - **Author:** Johan Sörell
